@@ -3,7 +3,7 @@ import manifest from "../../.cache/generated/data-domain-manifest.json";
 import semantics from "../../semantics/data-api.json";
 import registry from "../../sources/unicamp.json";
 import type { DomainSemantics } from "../../scripts/semantics.ts";
-import type { OfficialSourceRegistry } from "../../scripts/source-registry.ts";
+import { resolveSource, type OfficialSourceRegistry } from "../../scripts/source-registry.ts";
 
 interface Props { name: string; title?: string; headingLevel?: "h2" | "h3" }
 const { name, title, headingLevel = "h2" } = Astro.props;
@@ -13,9 +13,7 @@ const documented = (semantics as DomainSemantics).unions[name];
 if (!documented) throw new Error(`Missing documented union: ${name}`);
 const contract = manifest.concepts[name as keyof typeof manifest.concepts];
 if (!contract?.union) throw new Error(`Unknown union: ${name}`);
-const sourceById = new Map(
-  (registry as OfficialSourceRegistry).sources.map((source) => [source.id, source])
-);
+const sourceRegistry = registry as OfficialSourceRegistry;
 ---
 
 <section class="knowledge-section" aria-labelledby={`union-${name}`}>
@@ -32,7 +30,7 @@ const sourceById = new Map(
           <p>{semantic.description}</p>
           <p><small>Schema: <code>{variant.publicName ?? variant.schema}</code></small></p>
           {semantic.sources.map((reference) => {
-            const source = sourceById.get(reference.sourceId);
+            const source = resolveSource(sourceRegistry, reference.sourceId);
             return source && <p><small>Fonte: <a href={source.url}>{source.title}</a></small></p>;
           })}
         </article>

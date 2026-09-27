@@ -1,0 +1,35 @@
+---
+import { Code } from "astro:components";
+import { courseCatalogSnapshot as snapshot } from "../../examples/snapshots/course-catalog";
+import ProgressiveDisclosure from "./ProgressiveDisclosure.astro";
+
+const relationshipExample = {
+  course: { id: snapshot.course.id, code: snapshot.course.code },
+  catalogCourse: {
+    id: snapshot.catalogCourse.id,
+    catalogYear: snapshot.catalogCourse.catalogYear,
+    courseId: snapshot.catalogCourse.courseId,
+    catalogId: snapshot.catalogCourse.catalogId
+  },
+  catalog: { id: snapshot.catalogCourse.catalogId, year: snapshot.catalogCourse.catalogYear }
+};
+---
+
+<div class="course-catalog-payloads">
+  <ProgressiveDisclosure title="Ver relação em JSON" meta={`snapshot de ${snapshot.capturedAt}`}>
+    <Code code={JSON.stringify(relationshipExample, null, 2)} lang="json" theme="horizon" />
+  </ProgressiveDisclosure>
+
+  <ProgressiveDisclosure title="Ver payloads completos" meta="campos textuais extensos omitidos">
+    <div class="comparison-grid">
+      <article class="comparison-card">
+        <h3><code>Course</code></h3>
+        <Code code={JSON.stringify(snapshot.course, null, 2)} lang="json" theme="horizon" />
+      </article>
+      <article class="comparison-card">
+        <h3><code>CatalogCourse</code></h3>
+        <Code code={JSON.stringify(snapshot.catalogCourse, null, 2)} lang="json" theme="horizon" />
+      </article>
+    </div>
+  </ProgressiveDisclosure>
+</div>

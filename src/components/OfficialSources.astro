@@ -1,6 +1,6 @@
 ---
 import registry from "../../sources/unicamp.json";
-import type { OfficialSourceRegistry } from "../../scripts/source-registry.ts";
+import { resolveSource, type OfficialSourceRegistry } from "../../scripts/source-registry.ts";
 
 interface Props {
   ids: string[];
@@ -9,10 +9,11 @@ interface Props {
 const { ids } = Astro.props;
 const sourceRegistry = registry as OfficialSourceRegistry;
 const sources = ids.map((id) => {
-  const source = sourceRegistry.sources.find((candidate) => candidate.id === id);
+  const source = resolveSource(sourceRegistry, id);
   if (!source) throw new Error(`Unknown official source: ${id}`);
   return source;
 });
+const uniqueSources = [...new Map(sources.map((source) => [source.id, source])).values()];
 
 const authorityLabels: Record<string, string> = {
   normative: "Normativa",
@@ -22,22 +23,14 @@ const authorityLabels: Record<string, string> = {
 };
 ---
 
-<section aria-labelledby="official-sources-heading">
-  <h2 id="official-sources-heading">Fontes oficiais</h2>
-  <div class="source-grid">
-    {sources.map((source) => (
-      <article class="source-card">
+<section aria-labelledby="official-sources-heading" class="official-sources">
+  <h2 id="official-sources-heading">Fontes</h2>
+  <div class="source-list">
+    {uniqueSources.map((source) => (
+      <article class="source-row">
         <p class="source-kind">{authorityLabels[source.authority]}</p>
         <h3><a href={source.url}>{source.title}</a></h3>
-        <p>{source.issuer}</p>
-        <details class="source-details">
-          <summary>Proveniência e referências</summary>
-          <p>{source.provenanceNote}</p>
-          {source.references?.map((reference) => (
-            <p><small>{reference.label}{reference.articles?.length ? ` — arts. ${reference.articles.join(", ")}` : ""}</small></p>
-          ))}
-          <p><small>Verificação documental: {source.lastVerifiedAt}</small></p>
-        </details>
+        <p>{source.provenanceNote}</p>
       </article>
     ))}
   </div>

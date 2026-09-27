@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "requiredConcepts": ["Course", "Catalog", "CatalogCourse"],
   "concepts": {
     "Course": {
@@ -71,7 +71,7 @@
       "summary": "Edição anual do Catálogo dos Cursos de Graduação representada no POMI.",
       "semanticAuthorities": [
         { "sourceId": "UNICAMP_DAC_RGCG" },
-        { "sourceId": "UNICAMP_DAC_CATALOG_INDEX" }
+        { "sourceId": "UNICAMP_DAC_CATALOG" }
       ],
       "operationalSources": [
         {
@@ -85,7 +85,7 @@
       ],
       "fields": {
         "id": { "lineage": [{ "origin": "pomi-generated" }] },
-        "year": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_CATALOG_2026", "sourceField": "year" }] },
+        "year": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_CATALOG_2026", "sourceField": "year", "locator": { "label": "Edição anual do catálogo" } }] },
         "programsCount": { "lineage": [{ "origin": "aggregated", "sourceField": "catalogPrograms" }] },
         "coursesCount": { "lineage": [{ "origin": "aggregated", "sourceField": "catalogCourses" }] },
         "programIds": { "lineage": [{ "origin": "linked", "sourceField": "program.code" }] }
@@ -115,21 +115,21 @@
       "fields": {
         "id": { "lineage": [{ "origin": "pomi-generated" }] },
         "catalogId": { "lineage": [{ "origin": "linked", "sourceField": "catalog.year" }] },
-        "catalogYear": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_CATALOG_2026", "sourceField": "year" }] },
+        "catalogYear": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_CATALOG_2026", "sourceField": "year", "locator": { "label": "Edição do catálogo" } }] },
         "courseId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "code" }] },
         "code": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "code" }] },
         "name": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "name" }] },
         "credits": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "credits" }] },
-        "coordinator": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "coordinator" }] },
-        "workload": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "workload" }] },
-        "offeringPeriod": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "offeringPeriod" }] },
-        "evaluation": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "evaluation" }] },
-        "finalExam": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "finalExam" }] },
-        "minimumAttendancePercent": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "minimumAttendancePercent" }] },
-        "syllabus": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "syllabus" }] },
-        "bibliography": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "bibliography" }] },
+        "coordinator": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "coordinator", "locator": { "label": "Responsável pela disciplina" } }] },
+        "workload": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "workload", "locator": { "label": "Vetor de carga horária" } }] },
+        "offeringPeriod": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "offeringPeriod", "locator": { "label": "Período de oferecimento" } }] },
+        "evaluation": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "evaluation", "locator": { "label": "Modo de avaliação" } }] },
+        "finalExam": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "finalExam", "locator": { "label": "Exame final" } }] },
+        "minimumAttendancePercent": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "minimumAttendancePercent", "locator": { "label": "Frequência mínima" } }] },
+        "syllabus": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "syllabus", "locator": { "label": "Ementa da disciplina" } }] },
+        "bibliography": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "bibliography", "locator": { "label": "Bibliografia da disciplina" } }] },
         "sourceUrl": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "sourceUrl" }] },
-        "prerequisites": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "prerequisites" }] }
+        "prerequisites": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "prerequisites", "locator": { "label": "Pré-requisitos da disciplina" } }] }
       }
     }
   }

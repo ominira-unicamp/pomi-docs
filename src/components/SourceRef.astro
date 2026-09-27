@@ -1,12 +1,14 @@
 ---
 import registry from "../../sources/unicamp.json";
+import { resolveSource, type OfficialSourceRegistry } from "../../scripts/source-registry.ts";
 
 interface Props { id: string; label?: string }
 const { id, label } = Astro.props;
-const source = registry.sources.find((candidate) => candidate.id === id);
+const source = resolveSource(registry as OfficialSourceRegistry, id);
 if (!source) throw new Error(`Unknown official source: ${id}`);
+const href = source.instance?.url ?? source.url;
 ---
 
-<a class="source-ref" href={source.url} data-source-id={id} title={`${source.issuer}: ${source.title}`}>
+<a class="source-ref" href={href} data-source-id={id} title={`${source.issuer}: ${source.title}`}>
   {label ?? source.title}
 </a>

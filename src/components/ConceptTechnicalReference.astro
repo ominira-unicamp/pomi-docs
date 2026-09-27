@@ -15,20 +15,25 @@ import ProgressiveDisclosure from "./ProgressiveDisclosure.astro";
 interface Props {
   concept: "Course" | "Catalog" | "CatalogCourse";
   fieldGroups?: TechnicalFieldGroup[];
+  semanticLinks?: Record<string, { label: string; href: string }>;
 }
 
-const { concept, fieldGroups } = Astro.props;
+const { concept, fieldGroups, semanticLinks = {} } = Astro.props;
 const documented = (manifest as DomainManifest).concepts[concept];
 if (!documented) throw new Error(`Unknown technical concept: ${concept}`);
 const lineage = (provenance as DataProvenance).concepts[concept];
 if (!lineage) throw new Error(`Unknown provenance concept: ${concept}`);
 const groups = resolveFieldGroups(concept, documented, fieldGroups);
+for (const fieldName of Object.keys(semanticLinks)) {
+  if (!documented.fields.some(({ name }) => name === fieldName)) {
+    throw new Error(`Unknown semantic link field ${concept}.${fieldName}`);
+  }
+}
 const listing = listOperation(documented);
 const slug = conceptSlug(concept);
 ---
 
 <ProgressiveDisclosure id={`contract-${slug}`} title={`Referência técnica de ${concept}`} meta={`${documented.fields.length} campos`}>
-  <p class="generated-note">Contrato e operações gerados do OpenAPI. Filtros gerados de <code>x-pomi-filters</code>.</p>
   <p>Schema <code>{documented.schema}</code>; identidade <code>{documented.identityFields.join(", ") || "não declarada"}</code>.</p>
 
   <section class="technical-reference-section">
@@ -42,32 +47,39 @@ const slug = conceptSlug(concept);
 
   <section class="technical-reference-section">
     <h3>Campos</h3>
-    {groups.map((group) => group.fields.length > 0 && (
-      <section class="schema-group">
+    {groups.map((group) => {
+      const hasDescriptions = group.fields.some((field) => field.description);
+      return group.fields.length > 0 && <section class="schema-group">
         {group.title && <h4>{group.title}</h4>}
         <div class="table-wrap">
           <table role="table" tabindex="0">
-            <thead role="rowgroup"><tr role="row"><th role="columnheader">Campo</th><th role="columnheader">Tipo</th><th role="columnheader">Presença</th><th role="columnheader">Origem</th><th role="columnheader">Descrição</th></tr></thead>
+            <thead role="rowgroup"><tr role="row"><th role="columnheader">Campo</th><th role="columnheader">Tipo</th><th role="columnheader">Presença</th><th role="columnheader">Origem</th>{hasDescriptions && <th role="columnheader">Descrição</th>}</tr></thead>
             <tbody role="rowgroup">
               {group.fields.map((field) => {
                 const fieldLineage = lineage.fields[field.name];
                 if (!fieldLineage) throw new Error(`Missing provenance for ${concept}.${field.name}`);
                 const origins = summarizeFieldOrigins(fieldLineage.lineage.map(({ origin }) => origin));
+                const semanticLink = semanticLinks[field.name];
                 return (
                   <tr role="row">
                     <td role="cell" data-label="Campo"><code>{field.name}</code></td>
-                    <td role="cell" data-label="Tipo"><code>{field.type}</code>{field.nullable && " ou null"}</td>
+                    <td role="cell" data-label="Tipo">
+                      {semanticLink
+                        ? <a href={semanticLink.href}><code>{field.type}</code><span class="visually-hidden"> — {semanticLink.label}</span></a>
+                        : <code>{field.type}</code>}
+                      {field.nullable && " ou null"}
+                    </td>
                     <td role="cell" data-label="Presença">{field.required ? "Obrigatório" : "Opcional"}</td>
                     <td role="cell" data-label="Origem">{origins.join(" / ")}</td>
-                    <td role="cell" data-label="Descrição">{field.description ?? "Sem descrição adicional no contrato."}</td>
+                    {hasDescriptions && <td role="cell" data-label="Descrição">{field.description}</td>}
                   </tr>
                 );
               })}
             </tbody>
           </table>
         </div>
-      </section>
-    ))}
+      </section>;
+    })}
   </section>
 
   {listing?.filters && (

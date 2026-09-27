@@ -12,7 +12,7 @@ export type LineageOrigin =
   | "unspecified";
 
 export type DataProvenance = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   requiredConcepts: string[];
   concepts: Record<
     string,
@@ -29,6 +29,7 @@ export type DataProvenance = {
             origin: LineageOrigin;
             sourceId?: string;
             sourceField?: string;
+            locator?: { label: string; section?: string };
             note?: string;
           }>;
         }

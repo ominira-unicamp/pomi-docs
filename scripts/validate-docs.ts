@@ -42,7 +42,10 @@ const [manifest, registry, provenance, semantics, contractSources, packageJson] 
   readJson<{ dependencies?: Record<string, string> }>(resolve(projectRoot, "package.json"))
 ]);
 validateKnowledgeBase(manifest, registry, provenance, semantics);
-const sourceIds = new Map(registry.sources.map((source) => [source.id, source]));
+const sourceIds = new Map([
+  ...registry.families.map((source) => [source.id, source] as const),
+  ...registry.sources.map((source) => [source.id, source] as const)
+]);
 const conceptNames = new Set(Object.keys(manifest.concepts));
 const operationIds = new Set(
   Object.values(manifest.concepts).flatMap((concept) =>

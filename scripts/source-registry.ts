@@ -20,6 +20,13 @@ export type OfficialSource = {
   access: string;
   licenseNote: string;
   provenanceNote: string;
+  familyId?: string;
+  context?: {
+    catalogYear?: number;
+    coursePrefix?: string;
+    programCode?: string;
+    academicPeriod?: string;
+  };
   references?: Array<{
     label: string;
     section?: string;
@@ -37,10 +44,35 @@ export type OfficialSource = {
   };
 };
 
+export type SourceFamily = Pick<
+  OfficialSource,
+  "id" | "priority" | "authority" | "title" | "issuer" | "url" | "lastVerifiedAt" | "concepts" | "provenanceNote"
+>;
+
 export type OfficialSourceRegistry = {
-  schemaVersion: 2;
+  schemaVersion: 3;
+  families: SourceFamily[];
   sources: OfficialSource[];
 };
+
+export type ResolvedSource = SourceFamily & {
+  references?: OfficialSource["references"];
+  instance?: OfficialSource;
+};
+
+export function resolveSource(
+  registry: OfficialSourceRegistry,
+  id: string
+): ResolvedSource | undefined {
+  const family = registry.families.find((candidate) => candidate.id === id);
+  if (family) return family;
+  const instance = registry.sources.find((candidate) => candidate.id === id);
+  if (!instance) return undefined;
+  const parent = instance.familyId
+    ? registry.families.find((candidate) => candidate.id === instance.familyId)
+    : undefined;
+  return parent ? { ...parent, instance } : { ...instance, instance };
+}
 
 export async function loadSourceRegistry(): Promise<OfficialSourceRegistry> {
   const [registry, schema] = await Promise.all([
@@ -55,19 +87,23 @@ export async function loadSourceRegistry(): Promise<OfficialSourceRegistry> {
   }
 
   const ids = new Set<string>();
+  for (const family of registry.families) {
+    if (ids.has(family.id)) throw new Error(`Duplicate official source: ${family.id}`);
+    ids.add(family.id);
+  }
   for (const source of registry.sources) {
     if (ids.has(source.id)) {
       throw new Error(`Duplicate official source: ${source.id}`);
     }
     ids.add(source.id);
+    if (source.familyId && !registry.families.some(({ id }) => id === source.familyId)) {
+      throw new Error(`Unknown source family ${source.familyId} for ${source.id}`);
+    }
     const hostname = new URL(source.url).hostname;
     if (hostname !== "unicamp.br" && !hostname.endsWith(".unicamp.br")) {
       throw new Error(`Official source is outside Unicamp domains: ${source.id}`);
     }
   }
 
-  if (registry.sources.length !== 24) {
-    throw new Error(`Expected 24 V0.1 sources, received ${registry.sources.length}`);
-  }
   return registry;
 }

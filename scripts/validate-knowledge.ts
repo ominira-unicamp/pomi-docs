@@ -1,7 +1,7 @@
 import type { DomainManifest } from "./domain-manifest.ts";
 import type { DataProvenance } from "./provenance.ts";
 import type { DomainSemantics, SemanticValue } from "./semantics.ts";
-import type { OfficialSourceRegistry } from "./source-registry.ts";
+import type { OfficialSource, OfficialSourceRegistry, SourceFamily } from "./source-registry.ts";
 
 function sameMembers(actual: string[], expected: string[], subject: string): void {
   const missing = expected.filter((value) => !actual.includes(value));
@@ -15,7 +15,7 @@ function sameMembers(actual: string[], expected: string[], subject: string): voi
 
 function validateSemanticSources(
   values: Record<string, SemanticValue>,
-  sources: Map<string, OfficialSourceRegistry["sources"][number]>,
+  sources: Map<string, OfficialSource | SourceFamily>,
   subject: string
 ): void {
   for (const [value, semantic] of Object.entries(values)) {
@@ -24,7 +24,7 @@ function validateSemanticSources(
       if (!source) throw new Error(`${subject}.${value}: unknown source ${reference.sourceId}`);
       if (
         reference.referenceLabel &&
-        !source.references?.some(({ label }) => label === reference.referenceLabel)
+        !("references" in source && source.references?.some(({ label }) => label === reference.referenceLabel))
       ) {
         throw new Error(
           `${subject}.${value}: unknown reference label ${reference.referenceLabel}`
@@ -40,7 +40,10 @@ export function validateKnowledgeBase(
   provenance: DataProvenance,
   semantics: DomainSemantics
 ): void {
-  const sources = new Map(registry.sources.map((source) => [source.id, source]));
+  const sources = new Map<string, OfficialSource | SourceFamily>([
+    ...registry.families.map((source) => [source.id, source] as const),
+    ...registry.sources.map((source) => [source.id, source] as const)
+  ]);
   sameMembers(Object.keys(provenance.concepts), provenance.requiredConcepts, "provenance concepts");
 
   for (const conceptName of provenance.requiredConcepts) {
@@ -68,7 +71,7 @@ export function validateKnowledgeBase(
     for (const authority of documented.semanticAuthorities) {
       const source = sources.get(authority.sourceId)!;
       for (const label of authority.referenceLabels ?? []) {
-        if (!source.references?.some((reference) => reference.label === label)) {
+        if (!("references" in source && source.references?.some((reference) => reference.label === label))) {
           throw new Error(`${conceptName}: unknown reference label ${label}`);
         }
       }

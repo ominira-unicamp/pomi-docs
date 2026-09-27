@@ -1,8 +1,13 @@
 import { describe, expect, test } from "vitest";
 import { generateDomainManifest } from "../scripts/domain-manifest.ts";
 import { loadDataProvenance } from "../scripts/provenance.ts";
-import { loadDomainSemantics } from "../scripts/semantics.ts";
+import {
+  commonSemanticSources,
+  loadDomainSemantics,
+  specificSemanticSources
+} from "../scripts/semantics.ts";
 import { loadSourceRegistry } from "../scripts/source-registry.ts";
+import { resolveSource } from "../scripts/source-registry.ts";
 import { validateKnowledgeBase } from "../scripts/validate-knowledge.ts";
 
 async function knowledgeBase() {
@@ -16,6 +21,22 @@ async function knowledgeBase() {
 }
 
 describe("semantic documentation contracts", () => {
+  test("deduplicates shared sources without hiding variant-specific references", () => {
+    const first = {
+      label: "A",
+      description: "A",
+      sources: [{ sourceId: "COMMON" }, { sourceId: "ONLY_A" }]
+    };
+    const second = {
+      label: "B",
+      description: "B",
+      sources: [{ sourceId: "COMMON" }, { sourceId: "ONLY_B" }]
+    };
+    const common = commonSemanticSources([first, second]);
+    expect(common).toEqual([{ sourceId: "COMMON" }]);
+    expect(specificSemanticSources(first, common)).toEqual([{ sourceId: "ONLY_A" }]);
+  });
+
   test("extracts fields, nullable enums and discriminated unions from OpenAPI", async () => {
     const { manifest } = await knowledgeBase();
     expect(manifest.manifestVersion).toBe(3);
@@ -36,6 +57,18 @@ describe("semantic documentation contracts", () => {
   test("accepts the phase-one knowledge base", async () => {
     const values = await knowledgeBase();
     expect(() => validateKnowledgeBase(...Object.values(values) as Parameters<typeof validateKnowledgeBase>)).not.toThrow();
+  });
+
+  test("separates catalog family, edition and semantic locator", async () => {
+    const { registry, provenance } = await knowledgeBase();
+    expect(registry.schemaVersion).toBe(3);
+    const catalog = resolveSource(registry, "UNICAMP_DAC_CATALOG_2026");
+    expect(catalog?.id).toBe("UNICAMP_DAC_CATALOG");
+    expect(catalog?.instance?.context).toMatchObject({ catalogYear: 2026 });
+    expect(provenance.schemaVersion).toBe(2);
+    expect(provenance.concepts.CatalogCourse.fields.workload.lineage[0].locator?.label).toBe(
+      "Vetor de carga horária"
+    );
   });
 
   test("rejects unknown sources and incomplete field coverage", async () => {

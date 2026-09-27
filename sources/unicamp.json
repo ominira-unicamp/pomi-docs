@@ -1,5 +1,18 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
+  "families": [
+    {
+      "id": "UNICAMP_DAC_CATALOG",
+      "priority": "P0",
+      "authority": "registry",
+      "title": "Catálogo dos Cursos de Graduação",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/portal/graduacao/catalogos-de-cursos",
+      "lastVerifiedAt": "2026-09-27",
+      "concepts": ["Catalog", "CatalogCourse", "CatalogProgram", "CurriculumSuggestion"],
+      "provenanceNote": "Série anual que publica os dados curriculares dos cursos de graduação."
+    }
+  ],
   "sources": [
     {
       "id": "UNICAMP_DAC_RGCG",
@@ -144,6 +157,8 @@
     },
     {
       "id": "UNICAMP_DAC_CATALOG_2026",
+      "familyId": "UNICAMP_DAC_CATALOG",
+      "context": { "catalogYear": 2026 },
       "priority": "P0",
       "authority": "registry",
       "title": "Catálogo dos Cursos de Graduação 2026",
@@ -168,6 +183,8 @@
     },
     {
       "id": "UNICAMP_DAC_PROGRAM_42_2026",
+      "familyId": "UNICAMP_DAC_CATALOG",
+      "context": { "catalogYear": 2026, "programCode": "42" },
       "priority": "P0",
       "authority": "registry",
       "title": "Curso 42 — Ciência da Computação — 2026",
@@ -186,6 +203,8 @@
     },
     {
       "id": "UNICAMP_DAC_CURRICULUM_42_2026",
+      "familyId": "UNICAMP_DAC_CATALOG",
+      "context": { "catalogYear": 2026, "programCode": "42" },
       "priority": "P0",
       "authority": "registry",
       "title": "Ciência da Computação — Currículo Pleno 2026",
@@ -205,6 +224,8 @@
     },
     {
       "id": "UNICAMP_DAC_CURRICULUM_SUGGESTION_42_2026",
+      "familyId": "UNICAMP_DAC_CATALOG",
+      "context": { "catalogYear": 2026, "programCode": "42" },
       "priority": "P0",
       "authority": "registry",
       "title": "Ciência da Computação — Proposta para Cumprimento de Currículo 2026",
@@ -223,6 +244,8 @@
     },
     {
       "id": "UNICAMP_DAC_DISCIPLINES_MC_2026",
+      "familyId": "UNICAMP_DAC_CATALOG",
+      "context": { "catalogYear": 2026, "coursePrefix": "MC" },
       "priority": "P0",
       "authority": "registry",
       "title": "Catálogo 2026 — Disciplinas MC",

@@ -30,7 +30,7 @@ test("semantic slice renders provenance, generated fields and prerequisite varia
   await expect(page.getByText("Course", { exact: true }).first()).toBeVisible();
   await expect(page.getByText("CatalogCourse", { exact: true }).first()).toBeVisible();
   await expect(page.getByText("Catalog", { exact: true }).first()).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Como usar esses dados" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Como consultar esses dados" })).toBeVisible();
   const contextualNavigation = page.getByRole("navigation", { name: "Seções desta página" });
   await expect(contextualNavigation.getByRole("link", { name: "Referência" })).toHaveAttribute(
     "href",
@@ -63,9 +63,13 @@ test("semantic slice renders provenance, generated fields and prerequisite varia
   await expect(courseContract.getByRole("cell").filter({
     has: page.getByText("unit.code", { exact: true })
   })).toBeVisible();
-  await expect(courseContract.getByText(/OpenAPI/, { exact: false })).toBeVisible();
 
   await expect(page.getByRole("heading", { name: "Período de oferecimento" })).toBeVisible();
+  const evaluationSection = page.locator("#enum-CourseEvaluationMode").locator("..");
+  await expect(evaluationSection.locator(".semantic-value")).toHaveCount(3);
+  await expect(evaluationSection.getByText("Fonte:", { exact: false })).toHaveCount(1);
+  await expect(page.getByRole("heading", { name: "Carga horária", exact: true })).toBeVisible();
+  await expect(page.getByText(/representa o vetor de carga horária publicado/)).toBeVisible();
 
   const catalogCourseProvenanceDetails = page.locator("#provenance-catalog-course");
   const catalogCourseProvenance = catalogCourseProvenanceDetails.locator("summary");
@@ -92,12 +96,15 @@ test("semantic slice renders provenance, generated fields and prerequisite varia
     has: page.getByText("catalogId", { exact: true })
   });
   await expect(catalogCourseIdRow.getByText("Relacionado", { exact: true })).toBeVisible();
-
-  await expect(page.getByRole("heading", { name: "Próximos passos" })).toBeVisible();
-  await expect(page.getByRole("main").getByRole("link", { name: /Turmas e períodos/ })).toHaveAttribute(
+  await expect(catalogCourseContract.getByRole("link", { name: /Explicação de carga horária/ })).toHaveAttribute(
     "href",
-    "/domain/classes-and-periods/"
+    "#catalog-workload"
   );
+
+  await expect(page.getByRole("heading", { name: "Continue lendo" })).toBeVisible();
+  await expect(page.getByRole("main")).not.toContainText("catalogo-disciplinas");
+  await expect(page.getByRole("main")).not.toContainText("catalog-disciplines");
+  await expect(page.getByRole("main")).not.toContainText("Sem descrição adicional");
 
   await page.goto("/domain/prerequisites/");
   await expect(page.getByRole("heading", { name: "Tipos de item" })).toBeVisible();

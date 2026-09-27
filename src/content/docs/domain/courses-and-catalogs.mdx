@@ -15,11 +15,12 @@ operations:
 officialSources:
   - UNICAMP_DAC_RGCG
   - UNICAMP_DAC_DISCIPLINE_RULES
+  - UNICAMP_DAC_CATALOG
   - UNICAMP_DAC_CATALOG_2026
-  - UNICAMP_CCG_18_2026
 ---
 
 import CourseCatalogComparison from "../../../components/CourseCatalogComparison.astro";
+import CourseCatalogPayloads from "../../../components/CourseCatalogPayloads.astro";
 import SourceRef from "../../../components/SourceRef.astro";
 import InstitutionalDefinition from "../../../components/InstitutionalDefinition.astro";
 import ConceptProvenance from "../../../components/ConceptProvenance.astro";
@@ -38,15 +39,12 @@ esse conceito.
 </div>
 
 <nav class="contextual-nav" aria-label="Seções desta página">
-  <a href="#overview">Visão geral</a>
   <a href="#model">Modelo</a>
-  <a href="#usage">Como usar</a>
-  <a href="#interpretation">Interpretação</a>
+  <a href="#usage">Consultar dados</a>
+  <a href="#catalog-information">Dados do catálogo</a>
   <a href="#technical-reference">Referência</a>
-  <a href="#provenance">Proveniência</a>
+  <a href="#sources-and-provenance">Fontes</a>
 </nav>
-
-<span id="overview" class="section-anchor" aria-hidden="true"></span>
 
 <span id="model" class="section-anchor" aria-hidden="true"></span>
 
@@ -62,10 +60,12 @@ esse conceito.
 
 <span id="usage" class="section-anchor" aria-hidden="true"></span>
 
-## Como usar esses dados
+## Como consultar esses dados
 
-Escolha a intenção que corresponde ao dado procurado. Em cada opção, SDK e HTTP
-são duas interfaces equivalentes para a mesma operação da Data API.
+Use `Course` quando precisar identificar uma disciplina independentemente de um
+catálogo. Use `CatalogCourse` quando precisar de carga horária, avaliação,
+pré-requisitos ou outros valores de uma edição específica. SDK e HTTP acessam o
+mesmo contrato público.
 
 <ConceptTechnicalSurface
   concept="Course"
@@ -77,16 +77,6 @@ são duas interfaces equivalentes para a mesma operação da Data API.
       { field: "credits", operator: "gte", value: 4 },
       { field: "unit.code", operator: "eq", value: "IC" }
     ]
-  }}
-/>
-
-<ConceptTechnicalSurface
-  concept="Catalog"
-  title="Explorar um catálogo"
-  description="Use a edição anual para encontrar o recorte institucional que contextualiza os demais registros."
-  filterExample={{
-    label: "Catálogo da edição de 2026",
-    expressions: [{ field: "year", operator: "eq", value: 2026 }]
   }}
 />
 
@@ -103,9 +93,11 @@ são duas interfaces equivalentes para a mesma operação da Data API.
   }}
 />
 
-<span id="interpretation" class="section-anchor" aria-hidden="true"></span>
+<CourseCatalogPayloads />
 
-## O que depende do catálogo
+<span id="catalog-information" class="section-anchor" aria-hidden="true"></span>
+
+## Informações definidas pelo catálogo
 
 Pré-requisitos, carga horária, avaliação, frequência, ementa e bibliografia
 possuem contexto catalogal. Por isso, não presuma que essas propriedades são
@@ -115,12 +107,67 @@ historicamente invariáveis apenas porque também existe um valor corrente em
 Obrigatória ou eletiva não é uma característica intrínseca de `Course`: o
 caráter depende da participação da disciplina em determinado currículo.
 
-Essa separação acompanha o modo como a DAC publica disciplinas dentro de uma edição do catálogo, como o <SourceRef id="UNICAMP_DAC_CATALOG_2026" label="Catálogo de Graduação 2026" />. Em uma integração, mantenha `Course.id` como identidade e use `catalogYear` ou `catalogId` para selecionar o contexto institucional desejado.
+Essa separação acompanha o modo como a DAC publica disciplinas dentro de uma
+edição do <SourceRef id="UNICAMP_DAC_CATALOG" label="Catálogo dos Cursos de Graduação" />.
+Em uma integração, mantenha `Course.id` como identidade e use `catalogYear` ou
+`catalogId` para selecionar o contexto institucional desejado.
 
-<div class="semantic-sections">
-  <EnumSemantics name="CourseOfferingPeriod" title="Período de oferecimento" headingLevel="h3" />
-  <EnumSemantics name="CourseEvaluationMode" title="Modo de avaliação" headingLevel="h3" />
-</div>
+Todos os campos desta seção usam essa mesma fonte institucional. A edição de
+2026 serve como exemplo dos valores publicados; cada propriedade é representada
+no POMI pelo campo de `CatalogCourse` indicado em sua própria explicação.
+
+<span id="catalog-workload" class="section-anchor" aria-hidden="true"></span>
+
+### Carga horária
+
+`CatalogCourse.workload` representa o vetor de carga horária publicado para a
+disciplina. Ele separa atividades teóricas, práticas, de laboratório,
+orientadas, a distância e de extensão, além das semanas e dos totais
+associados. A estrutura exata permanece na [API Reference da Data API](https://data.pomi.ominira.dev/docs).
+
+<span id="catalog-offering-period" class="section-anchor" aria-hidden="true"></span>
+
+### Período de oferecimento
+
+`CatalogCourse.offeringPeriod` indica em quais períodos letivos a disciplina é
+prevista naquela edição. O POMI normaliza a publicação institucional como
+`CourseOfferingPeriod`.
+
+<EnumSemantics name="CourseOfferingPeriod" showHeading={false} />
+
+<span id="catalog-evaluation" class="section-anchor" aria-hidden="true"></span>
+
+### Modo de avaliação
+
+`CatalogCourse.evaluation` informa como o resultado acadêmico é expresso na
+edição consultada. Os valores institucionais são normalizados como
+`CourseEvaluationMode` para uso estável pela API e pelo SDK.
+
+<EnumSemantics name="CourseEvaluationMode" showHeading={false} />
+
+<span id="catalog-attendance-exam" class="section-anchor" aria-hidden="true"></span>
+
+### Frequência e exame
+
+`CatalogCourse.minimumAttendancePercent` registra a frequência mínima publicada;
+`CatalogCourse.finalExam` informa se a disciplina prevê exame final. Valores
+`null` indicam que o catálogo não forneceu uma informação reconhecida, não que a
+regra deva ser herdada de outra edição.
+
+<span id="catalog-prerequisites" class="section-anchor" aria-hidden="true"></span>
+
+### Pré-requisitos
+
+`CatalogCourse.prerequisites` organiza alternativas em `any` e condições
+conjuntas em `all`. Veja a [semântica completa de pré-requisitos](/domain/prerequisites/),
+incluindo disciplinas, formas de cumprimento e requisitos especiais.
+
+<span id="catalog-content" class="section-anchor" aria-hidden="true"></span>
+
+### Ementa e bibliografia
+
+`CatalogCourse.syllabus` e `CatalogCourse.bibliography` pertencem à edição do
+catálogo. Não os trate como texto historicamente invariável de `Course`.
 
 ## Limites de interpretação
 
@@ -142,6 +189,16 @@ Abra somente o conceito cujos campos ou capacidades precisa consultar.
 
 <ConceptTechnicalReference
   concept="CatalogCourse"
+  semanticLinks={{
+    workload: { label: "Explicação de carga horária", href: "#catalog-workload" },
+    offeringPeriod: { label: "Explicação dos períodos de oferecimento", href: "#enum-CourseOfferingPeriod" },
+    evaluation: { label: "Explicação dos modos de avaliação", href: "#enum-CourseEvaluationMode" },
+    finalExam: { label: "Explicação de frequência e exame", href: "#catalog-attendance-exam" },
+    minimumAttendancePercent: { label: "Explicação de frequência e exame", href: "#catalog-attendance-exam" },
+    prerequisites: { label: "Explicação de pré-requisitos", href: "#catalog-prerequisites" },
+    syllabus: { label: "Explicação de ementa e bibliografia", href: "#catalog-content" },
+    bibliography: { label: "Explicação de ementa e bibliografia", href: "#catalog-content" }
+  }}
   fieldGroups={[
     { title: "Identificação", fields: ["id", "catalogId", "catalogYear", "courseId"] },
     { title: "Publicação no catálogo", fields: ["code", "name", "coordinator"] },
@@ -152,11 +209,13 @@ Abra somente o conceito cujos campos ou capacidades precisa consultar.
   ]}
 />
 
-<span id="provenance" class="section-anchor" aria-hidden="true"></span>
+<span id="sources-and-provenance" class="section-anchor" aria-hidden="true"></span>
 
-## Proveniência
+## Fontes e proveniência
 
-Abra apenas o conceito que precisa auditar. As tabelas distinguem valores publicados, normalizados, relacionados, derivados e gerados pelo POMI.
+As fontes citadas junto dos campos explicam a evidência contextual. Os detalhes
+abaixo funcionam como inventário de auditoria e distinguem valores publicados,
+normalizados, relacionados, derivados e gerados pelo POMI.
 
 <ConceptProvenance concept="Course" />
 
@@ -164,13 +223,8 @@ Abra apenas o conceito que precisa auditar. As tabelas distinguem valores public
 
 <ConceptProvenance concept="CatalogCourse" />
 
-## Contratos públicos
+## Continue lendo
 
-Para parâmetros, responses, erros e schemas completos, consulte a
-[API Reference da Data API](https://data.pomi.ominira.dev/docs).
-
-## Próximos passos
-
-- [Pré-requisitos](/domain/prerequisites/): entenda como as dependências são representadas.
-- [Currículos](/domain/curricula/): veja como disciplinas participam da formação.
-- [Turmas e períodos](/domain/classes-and-periods/): acompanhe a passagem da disciplina para um oferecimento concreto.
+- **Continuar entendendo o domínio:** [Pré-requisitos](/domain/prerequisites/).
+- **Usar os dados:** [Filtros e ordenação](/data-api/filtering/).
+- **Consultar o contrato completo:** [Data API](https://data.pomi.ominira.dev/docs).

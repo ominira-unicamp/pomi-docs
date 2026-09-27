@@ -261,6 +261,45 @@ body { letter-spacing: 0.005em; }
   padding-top: 1rem;
 }
 
+.semantic-list,
+.value-object-list {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.enum-value-list { gap: 0; }
+
+.semantic-value {
+  border-top: 1px solid var(--sl-color-gray-5);
+  padding-block: 0.85rem;
+}
+
+.semantic-value > :first-child { margin-top: 0; }
+.semantic-value > :last-child { margin-bottom: 0; }
+.semantic-value p { margin-block: 0.25rem; }
+
+.semantic-sources { margin-bottom: 1rem; }
+
+.value-object-list .knowledge-section {
+  border-top: 1px solid var(--sl-color-gray-5);
+  margin-block: 0;
+  padding-top: 0.75rem;
+  scroll-margin-top: 9rem;
+}
+
+.value-object-list h4 { margin-block: 0 0.5rem; }
+
+.source-list { display: grid; gap: 0; }
+
+.source-row {
+  border-top: 1px solid var(--sl-color-gray-5);
+  padding-block: 1rem;
+}
+
+.source-row h3,
+.source-row p { margin-block: 0.25rem; }
+
 .semantic-card {
   background: color-mix(in srgb, var(--sl-color-accent-low) 24%, transparent);
   border-top: 2px solid var(--sl-color-accent);
@@ -437,6 +476,14 @@ body { letter-spacing: 0.005em; }
 }
 
 .relationship-example .astro-code span[style*="E95678"] {
+  color: #f58aa1 !important;
+}
+
+.course-catalog-payloads .astro-code {
+  background-color: #211419 !important;
+}
+
+.course-catalog-payloads .astro-code span[style*="E95678"] {
   color: #f58aa1 !important;
 }
 

@@ -2,7 +2,7 @@
 import provenance from "../../provenance/data-api.json";
 import registry from "../../sources/unicamp.json";
 import type { DataProvenance } from "../../scripts/provenance.ts";
-import type { OfficialSourceRegistry } from "../../scripts/source-registry.ts";
+import { resolveSource, type OfficialSourceRegistry } from "../../scripts/source-registry.ts";
 import { conceptSlug } from "../../scripts/technical-surface.ts";
 
 interface Props { concept: "Course" | "Catalog" | "CatalogCourse" }
@@ -10,7 +10,7 @@ const { concept } = Astro.props;
 const data = (provenance as DataProvenance).concepts[concept];
 const sourceRegistry = registry as OfficialSourceRegistry;
 const authorities = data.semanticAuthorities.map((authority) => {
-  const source = sourceRegistry.sources.find(({ id }) => id === authority.sourceId);
+  const source = resolveSource(sourceRegistry, authority.sourceId);
   if (!source) throw new Error(`Unknown semantic authority: ${authority.sourceId}`);
   const references = source.references?.filter(({ label }) =>
     authority.referenceLabels?.includes(label)

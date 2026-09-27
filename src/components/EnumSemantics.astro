@@ -2,36 +2,54 @@
 import manifest from "../../.cache/generated/data-domain-manifest.json";
 import semantics from "../../semantics/data-api.json";
 import registry from "../../sources/unicamp.json";
-import type { DomainSemantics } from "../../scripts/semantics.ts";
-import type { OfficialSourceRegistry } from "../../scripts/source-registry.ts";
+import {
+  commonSemanticSources,
+  specificSemanticSources,
+  type DomainSemantics,
+  type SemanticSource
+} from "../../scripts/semantics.ts";
+import { resolveSource, type OfficialSourceRegistry } from "../../scripts/source-registry.ts";
 
-interface Props { name: string; title?: string; headingLevel?: "h2" | "h3" }
-const { name, title, headingLevel = "h2" } = Astro.props;
+interface Props { name: string; title?: string; headingLevel?: "h2" | "h3"; showHeading?: boolean }
+const { name, title, headingLevel = "h2", showHeading = true } = Astro.props;
 const Heading = headingLevel;
 const ItemHeading = headingLevel === "h3" ? "h4" : "h3";
 const documented = (semantics as DomainSemantics).enums[name];
 if (!documented) throw new Error(`Missing documented enum: ${name}`);
 const contract = manifest.concepts[name as keyof typeof manifest.concepts];
 if (!contract?.enumValues) throw new Error(`Unknown enum: ${name}`);
-const sourceById = new Map(
-  (registry as OfficialSourceRegistry).sources.map((source) => [source.id, source])
-);
+const sourceRegistry = registry as OfficialSourceRegistry;
+const values = contract.enumValues.map((value) => documented.values[value]);
+const commonSources = commonSemanticSources(values);
+const sourceReference = (reference: SemanticSource) => {
+  const source = resolveSource(sourceRegistry, reference.sourceId);
+  return source ? { source, suffix: reference.referenceLabel ? ` — ${reference.referenceLabel}` : "" } : null;
+};
 ---
 
 <section class="knowledge-section" aria-labelledby={`enum-${name}`}>
-  <Heading id={`enum-${name}`}>{title ?? name}</Heading>
-  <div class="semantic-grid">
+  {showHeading && <Heading id={`enum-${name}`}>{title ?? name}</Heading>}
+  {commonSources.length > 0 && (
+    <p class="semantic-sources"><small>
+      Fonte{commonSources.length > 1 ? "s" : ""}: {commonSources.map((reference, index) => {
+        const resolved = sourceReference(reference);
+        return resolved && <>{index > 0 && "; "}<a href={resolved.source.url}>{resolved.source.title}</a>{resolved.suffix}</>;
+      })}
+    </small></p>
+  )}
+  <div id={!showHeading ? `enum-${name}` : undefined} class="semantic-list enum-value-list">
     {contract.enumValues.map((value) => {
       const semantic = documented.values[value];
       if (!semantic) throw new Error(`Missing enum semantics: ${name}.${value}`);
+      const specificSources = specificSemanticSources(semantic, commonSources);
       return (
-        <article class="semantic-card">
+        <article class="semantic-value">
           <ItemHeading><code>{value}</code></ItemHeading>
           <p><strong>{semantic.label}</strong></p>
           <p>{semantic.description}</p>
-          {semantic.sources.map((reference) => {
-            const source = sourceById.get(reference.sourceId);
-            return source && <p><small>Fonte: <a href={source.url}>{source.title}</a></small></p>;
+          {specificSources.map((reference) => {
+            const resolved = sourceReference(reference);
+            return resolved && <p><small>Fonte: <a href={resolved.source.url}>{resolved.source.title}</a>{resolved.suffix}</small></p>;
           })}
         </article>
       );

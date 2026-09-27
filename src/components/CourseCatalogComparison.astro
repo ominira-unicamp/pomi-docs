@@ -1,24 +1,4 @@
 ---
-import { courseCatalogSnapshot as snapshot } from "../../examples/snapshots/course-catalog";
-import { Code } from "astro:components";
-import ProgressiveDisclosure from "./ProgressiveDisclosure.astro";
-
-const relationshipExample = {
-  course: {
-    id: snapshot.course.id,
-    code: snapshot.course.code
-  },
-  catalogCourse: {
-    id: snapshot.catalogCourse.id,
-    catalogYear: snapshot.catalogCourse.catalogYear,
-    courseId: snapshot.catalogCourse.courseId,
-    catalogId: snapshot.catalogCourse.catalogId
-  },
-  catalog: {
-    id: snapshot.catalogCourse.catalogId,
-    year: snapshot.catalogCourse.catalogYear
-  }
-};
 ---
 
 <div class="relationship-strip" aria-label="Relação entre Course, CatalogCourse e Catalog">
@@ -29,23 +9,4 @@ const relationshipExample = {
   <div><a href="#catalog"><code>Catalog</code></a><small>edição anual</small></div>
 </div>
 
-<div class="relationship-example">
-  <p><strong>Os vínculos estão nos IDs:</strong> <code>CatalogCourse.courseId → Course.id</code> e <code>CatalogCourse.catalogId → Catalog.id</code>.</p>
-  <Code code={JSON.stringify(relationshipExample, null, 2)} lang="json" theme="horizon" />
-</div>
-
-<ProgressiveDisclosure title="Ver payloads completos" meta={`snapshot de ${snapshot.capturedAt}`}>
-  <div class="comparison-grid">
-    <article class="comparison-card">
-      <h3><code>Course</code></h3>
-      <p>A identidade reutilizável da disciplina.</p>
-      <Code code={JSON.stringify(snapshot.course, null, 2)} lang="json" theme="horizon" />
-    </article>
-    <article class="comparison-card">
-      <h3><code>CatalogCourse</code></h3>
-      <p>O registro publicado em um catálogo específico.</p>
-      <Code code={JSON.stringify(snapshot.catalogCourse, null, 2)} lang="json" theme="horizon" />
-    </article>
-  </div>
-  <p><small>Campos textuais extensos foram omitidos.</small></p>
-</ProgressiveDisclosure>
+<p><strong>Os vínculos estão nos IDs:</strong> <code>CatalogCourse.courseId → Course.id</code> e <code>CatalogCourse.catalogId → Catalog.id</code>.</p>

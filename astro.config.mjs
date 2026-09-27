@@ -15,7 +15,7 @@ export default defineConfig({
         baseUrl: "https://github.com/ominira-unicamp/pomi-docs/edit/main/"
       },
       lastUpdated: true,
-      tableOfContents: false,
+      tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 3 },
       components: { Footer: "./src/components/PageFooter.astro" },
       head: [
         {
