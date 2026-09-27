@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: ominira-unicamp/pomi-backend
+          path: pomi-backend
+          ref: eeb76d0738e94495cc3fa438fb8dca592b12b470
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm ci
+        working-directory: pomi-backend
+      - run: npm run contracts:check -- --backend ./pomi-backend
+      - run: npm run validate
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e

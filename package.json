@@ -1,0 +1,46 @@
+{
+  "name": "@pomi/docs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "AGPL-3.0-only",
+  "engines": {
+    "node": ">=24 <27"
+  },
+  "scripts": {
+    "dev": "npm run generate && ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "check": "npm run generate && ASTRO_TELEMETRY_DISABLED=1 astro check && tsc --noEmit -p tsconfig.scripts.json && tsc --noEmit -p tsconfig.examples.json",
+    "test": "vitest run test/*.test.ts",
+    "test:e2e": "playwright test",
+    "build": "npm run generate && ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
+    "generate": "node --import tsx scripts/generate.ts",
+    "sources:check": "node --import tsx scripts/validate-sources.ts",
+    "contracts:sync": "node --import tsx scripts/sync-contracts.ts",
+    "contracts:check": "node --import tsx scripts/check-contracts.ts",
+    "contracts:validate": "redocly lint contracts/data-openapi.json",
+    "docs:validate": "node --import tsx scripts/validate-docs.ts",
+    "links:check": "node --import tsx scripts/check-links.ts",
+    "output:check": "node --import tsx scripts/validate-output.ts",
+    "validate": "npm run sources:check && npm run contracts:validate && npm run test && npm run docs:validate && npm run check && npm run build && npm run links:check && npm run output:check"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "0.42.4",
+    "@fontsource-variable/outfit": "5.3.0",
+    "@ominira/pomi-sdk": "1.0.0-rc.1",
+    "astro": "7.3.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.8",
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0",
+    "@redocly/cli": "2.54.3",
+    "@types/node": "24.10.1",
+    "ajv": "8.17.1",
+    "ajv-formats": "3.0.1",
+    "gray-matter": "4.0.3",
+    "tsx": "4.20.6",
+    "typescript": "5.9.3",
+    "vitest": "5.0.2"
+  }
+}

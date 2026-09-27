@@ -1,0 +1,12 @@
+---
+import registry from "../../sources/unicamp.json";
+
+interface Props { id: string; label?: string }
+const { id, label } = Astro.props;
+const source = registry.sources.find((candidate) => candidate.id === id);
+if (!source) throw new Error(`Unknown official source: ${id}`);
+---
+
+<a class="source-ref" href={source.url} data-source-id={id} title={`${source.issuer}: ${source.title}`}>
+  {label ?? source.title}
+</a>

@@ -1,0 +1,11 @@
+{
+  "dataApi": {
+    "repository": "ominira-unicamp/pomi-backend",
+    "commit": "eeb76d0738e94495cc3fa438fb8dca592b12b470",
+    "sha256": "a154b2f58d2aa6e9713bd6419562465d7f2a7d4c7a5bc6333df3fdb98dd97d16"
+  },
+  "sdk": {
+    "package": "@ominira/pomi-sdk",
+    "version": "1.0.0-rc.1"
+  }
+}

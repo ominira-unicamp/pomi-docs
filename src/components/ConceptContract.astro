@@ -1,0 +1,37 @@
+---
+import manifest from "../../.cache/generated/data-domain-manifest.json";
+
+interface Props {
+  names: string[];
+}
+
+const { names } = Astro.props;
+const concepts = names.map((name) => {
+  const concept = manifest.concepts[name as keyof typeof manifest.concepts];
+  if (!concept) throw new Error(`Unknown documented concept: ${name}`);
+  return { name, ...concept };
+});
+---
+
+<section aria-labelledby="contract-heading">
+  <h2 id="contract-heading">Contrato público</h2>
+  <div class="contract-grid">
+    {concepts.map((concept) => (
+      <article class="contract-card">
+        <h3>{concept.name}</h3>
+        <p>Schema: <code>{concept.schema}</code></p>
+        <p>Identidade: <code>{concept.identityFields.join(", ") || "não declarada"}</code></p>
+        <ul>
+          {concept.operations.map((operation) => (
+            <li>
+              <a href={operation.referenceHref}>
+                <code>{operation.method} {operation.path}</code>
+              </a>
+              <span> — {operation.operationId}</span>
+            </li>
+          ))}
+        </ul>
+      </article>
+    ))}
+  </div>
+</section>

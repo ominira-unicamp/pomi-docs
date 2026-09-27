@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "requiredConcepts": ["Course", "Catalog", "CatalogCourse"],
+  "concepts": {
+    "Course": {
+      "nature": "pomi-abstraction",
+      "summary": "Identidade reutilizável que o POMI forma a partir do código institucional de uma disciplina.",
+      "semanticAuthorities": [
+        {
+          "sourceId": "UNICAMP_DAC_RGCG",
+          "referenceLabels": ["Definição e características das disciplinas"]
+        }
+      ],
+      "operationalSources": [
+        {
+          "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026",
+          "collector": "catalogo-disciplinas",
+          "injection": "catalog-disciplines"
+        },
+        {
+          "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2",
+          "collector": "caderno-horarios",
+          "injection": "academic-data"
+        }
+      ],
+      "limitations": [
+        "A linhagem descreve os fluxos possíveis do modelo e não identifica qual execução produziu um registro específico.",
+        "A unidade e os créditos podem ser conhecidos em momentos diferentes pelos fluxos de catálogo e de oferta."
+      ],
+      "fields": {
+        "id": { "lineage": [{ "origin": "pomi-generated" }] },
+        "code": {
+          "lineage": [
+            {
+              "origin": "normalized",
+              "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026",
+              "sourceField": "code",
+              "note": "Espaços, caixa e formas históricas são normalizados antes do relacionamento."
+            }
+          ]
+        },
+        "name": {
+          "lineage": [
+            { "origin": "normalized", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "name" },
+            { "origin": "source", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "name" }
+          ]
+        },
+        "credits": {
+          "lineage": [
+            { "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "credits" },
+            {
+              "origin": "unspecified",
+              "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2",
+              "note": "O fluxo acadêmico atual cria a identidade antes de haver necessariamente um valor catalogal definitivo."
+            }
+          ]
+        },
+        "prefix": {
+          "lineage": [{ "origin": "derived", "sourceField": "code", "note": "Prefixo extraído do código normalizado." }]
+        },
+        "unitId": {
+          "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "institute.code" }]
+        },
+        "unitCode": {
+          "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "institute.code" }]
+        }
+      }
+    },
+    "Catalog": {
+      "nature": "institutional-concept",
+      "summary": "Edição anual do Catálogo dos Cursos de Graduação representada no POMI.",
+      "semanticAuthorities": [
+        { "sourceId": "UNICAMP_DAC_RGCG" },
+        { "sourceId": "UNICAMP_DAC_CATALOG_INDEX" }
+      ],
+      "operationalSources": [
+        {
+          "sourceId": "UNICAMP_DAC_CATALOG_2026",
+          "collector": "catalogos-programas/catalogo-disciplinas/catalogo-curriculos",
+          "injection": "catalog-programs/catalog-disciplines"
+        }
+      ],
+      "limitations": [
+        "As contagens refletem os relacionamentos persistidos no POMI e não são valores publicados literalmente pela DAC."
+      ],
+      "fields": {
+        "id": { "lineage": [{ "origin": "pomi-generated" }] },
+        "year": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_CATALOG_2026", "sourceField": "year" }] },
+        "programsCount": { "lineage": [{ "origin": "aggregated", "sourceField": "catalogPrograms" }] },
+        "coursesCount": { "lineage": [{ "origin": "aggregated", "sourceField": "catalogCourses" }] },
+        "programIds": { "lineage": [{ "origin": "linked", "sourceField": "program.code" }] }
+      }
+    },
+    "CatalogCourse": {
+      "nature": "pomi-abstraction",
+      "summary": "Representação contextual de uma disciplina dentro de uma edição do catálogo.",
+      "semanticAuthorities": [
+        {
+          "sourceId": "UNICAMP_DAC_RGCG",
+          "referenceLabels": ["Definição e características das disciplinas", "Pré-requisitos", "Vetor de carga horária"]
+        },
+        { "sourceId": "UNICAMP_DAC_DISCIPLINE_RULES" }
+      ],
+      "operationalSources": [
+        {
+          "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026",
+          "collector": "catalogo-disciplinas",
+          "injection": "catalog-disciplines"
+        }
+      ],
+      "limitations": [
+        "O POMI estrutura e relaciona valores do catálogo; nomes como CatalogCourse e seus IDs são abstrações do projeto.",
+        "A ausência de um valor no contrato não autoriza inferi-lo a partir de outra edição do catálogo."
+      ],
+      "fields": {
+        "id": { "lineage": [{ "origin": "pomi-generated" }] },
+        "catalogId": { "lineage": [{ "origin": "linked", "sourceField": "catalog.year" }] },
+        "catalogYear": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_CATALOG_2026", "sourceField": "year" }] },
+        "courseId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "code" }] },
+        "code": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "code" }] },
+        "name": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "name" }] },
+        "credits": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "credits" }] },
+        "coordinator": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "coordinator" }] },
+        "workload": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "workload" }] },
+        "offeringPeriod": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "offeringPeriod" }] },
+        "evaluation": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "evaluation" }] },
+        "finalExam": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "finalExam" }] },
+        "minimumAttendancePercent": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "minimumAttendancePercent" }] },
+        "syllabus": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "syllabus" }] },
+        "bibliography": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "bibliography" }] },
+        "sourceUrl": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "sourceUrl" }] },
+        "prerequisites": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "prerequisites" }] }
+      }
+    }
+  }
+}

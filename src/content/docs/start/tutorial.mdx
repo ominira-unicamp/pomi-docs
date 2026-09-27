@@ -1,0 +1,62 @@
+---
+title: Sua primeira integração
+description: Consulte uma disciplina, encontre seu contexto de catálogo e repita o fluxo com o SDK.
+concepts: [Course, CatalogCourse]
+operations: [listCourses, listCatalogCourses]
+officialSources: [UNICAMP_DAC_CATALOG_2026, UNICAMP_DAC_DISCIPLINES_MC_2026]
+---
+
+import CourseCatalogComparison from "../../../components/CourseCatalogComparison.astro";
+import SourceRef from "../../../components/SourceRef.astro";
+
+Ao fim deste tutorial você saberá consultar uma disciplina sem confundir sua identidade com a versão publicada em um catálogo. Os exemplos usam `MC732` e o contrato versionado deste portal.
+
+## 1. Consulte a disciplina
+
+```bash
+curl --get 'https://data.pomi.ominira.dev/courses' \
+  --data-urlencode 'filter[code][eq]=MC732' \
+  --data-urlencode 'pageSize=1'
+```
+
+A resposta é uma página. O primeiro item em `data` é um `Course`: código, nome, créditos e unidade normalizados. `quantity` conta os itens desta página, `total` conta todos os resultados e `links` permite navegar sem reconstruir URLs.
+
+## 2. Acrescente o contexto do catálogo
+
+```bash
+curl --get 'https://data.pomi.ominira.dev/catalog-courses' \
+  --data-urlencode 'filter[courseCode][eq]=MC732' \
+  --data-urlencode 'pageSize=1'
+```
+
+`CatalogCourse` acrescenta `catalogYear`, carga horária, avaliação, frequência, ementa, bibliografia e pré-requisitos. Esses dados vêm do catálogo publicado pela DAC, como o <SourceRef id="UNICAMP_DAC_DISCIPLINES_MC_2026" label="catálogo de disciplinas MC de 2026" />.
+
+<CourseCatalogComparison />
+
+O vínculo é explícito: `catalogCourse.courseId === course.id`. Não use o código como chave interna nem presuma que os campos catalogais permanecem iguais em todos os anos.
+
+## 3. Leia os pré-requisitos
+
+`prerequisites.any` contém alternativas; cada alternativa tem um grupo `all`. Portanto, `any: [{ all: [A, B] }, { all: [C] }]` significa **(A e B) ou C**. Veja a [semântica completa de pré-requisitos](/domain/prerequisites/).
+
+## 4. Repita com o SDK
+
+```ts
+import { createPomiSdk } from "@ominira/pomi-sdk";
+
+const pomi = createPomiSdk();
+const page = await pomi.data.courses.list({
+  filter: { code: { eq: "MC732" } },
+  pageSize: 1
+});
+
+const course = page.data[0];
+```
+
+O SDK fornece os mesmos recursos e preserva os tipos do contrato. Para percorrer mais de uma página, siga `page.links.next`; para falhas HTTP, trate o problema tipado descrito em [Erros](/data-api/errors/).
+
+## Próximos passos
+
+- Aprenda [filtros e ordenação](/data-api/filtering/).
+- Entenda as [convenções da Data API](/data-api/conventions/).
+- Inspecione `listCourses` e `listCatalogCourses` na [referência interativa](https://data.pomi.ominira.dev/docs).

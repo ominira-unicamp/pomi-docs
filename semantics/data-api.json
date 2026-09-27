@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "enums": {
+    "CourseOfferingPeriod": {
+      "nullMeaning": "O catálogo não forneceu um período de oferecimento reconhecido.",
+      "values": {
+        "ALL_PERIODS": { "label": "Todos os períodos", "description": "A disciplina é prevista para períodos pares e ímpares.", "sources": [{ "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026" }] },
+        "ODD_PERIODS": { "label": "Períodos ímpares", "description": "A disciplina é prevista para o primeiro período letivo do ano.", "sources": [{ "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026" }] },
+        "EVEN_PERIODS": { "label": "Períodos pares", "description": "A disciplina é prevista para o segundo período letivo do ano.", "sources": [{ "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026" }] },
+        "UNIT_DISCRETION": { "label": "A critério da unidade", "description": "O oferecimento depende de decisão da unidade responsável.", "sources": [{ "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026" }] }
+      }
+    },
+    "CourseEvaluationMode": {
+      "nullMeaning": "O catálogo não forneceu um modo de avaliação reconhecido.",
+      "values": {
+        "GRADE_AND_ATTENDANCE": { "label": "Nota e frequência", "description": "A avaliação catalogada considera nota e frequência.", "sources": [{ "sourceId": "UNICAMP_DAC_RGCG", "referenceLabel": "Definição e características das disciplinas" }] },
+        "ATTENDANCE": { "label": "Frequência", "description": "A avaliação catalogada é expressa pela frequência.", "sources": [{ "sourceId": "UNICAMP_DAC_RGCG", "referenceLabel": "Definição e características das disciplinas" }] },
+        "CONCEPT": { "label": "Conceito", "description": "A avaliação catalogada é expressa por conceito.", "sources": [{ "sourceId": "UNICAMP_DAC_RGCG", "referenceLabel": "Definição e características das disciplinas" }] }
+      }
+    },
+    "CatalogCoursePrerequisiteFulfillment": {
+      "values": {
+        "FULL": { "label": "Pleno", "description": "Exige aprovação na disciplina antecedente conforme a regra institucional de pré-requisito pleno.", "sources": [{ "sourceId": "UNICAMP_DAC_RGCG", "referenceLabel": "Pré-requisitos" }] },
+        "PARTIAL": { "label": "Parcial", "description": "Exige o cumprimento parcial previsto institucionalmente para a disciplina antecedente.", "sources": [{ "sourceId": "UNICAMP_DAC_RGCG", "referenceLabel": "Pré-requisitos" }] }
+      }
+    }
+  },
+  "unions": {
+    "CatalogCoursePrerequisiteItem": {
+      "discriminator": "type",
+      "variants": {
+        "COURSE": { "label": "Disciplina", "description": "Relaciona o requisito a uma identidade Course por courseId.", "sources": [{ "sourceId": "UNICAMP_DAC_RGCG", "referenceLabel": "Pré-requisitos" }] },
+        "SPECIAL_REQUIREMENT": { "label": "Requisito especial", "description": "Representa uma condição que não é o cumprimento de outra disciplina.", "sources": [{ "sourceId": "UNICAMP_DAC_RGCG", "referenceLabel": "Pré-requisitos" }] }
+      }
+    },
+    "CatalogCourseSpecialRequirement": {
+      "discriminator": "type",
+      "variants": {
+        "AUTHORIZATION": { "label": "Autorização", "description": "Exige autorização institucional conforme a condição publicada no catálogo.", "sources": [{ "sourceId": "UNICAMP_DAC_RGCG", "referenceLabel": "Pré-requisitos" }] },
+        "PROGRESSION_COEFFICIENT": { "label": "Coeficiente de progressão", "description": "Exige um valor mínimo de coeficiente de progressão normalizado pelo POMI.", "sources": [{ "sourceId": "UNICAMP_DAC_RGCG", "referenceLabel": "Pré-requisitos" }] }
+      }
+    }
+  }
+}

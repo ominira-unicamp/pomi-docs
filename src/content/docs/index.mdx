@@ -1,0 +1,35 @@
+---
+title: POMI Docs
+description: Dados acadêmicos públicos da Unicamp, explicados e programáveis.
+template: splash
+hero:
+  title: Dados acadêmicos, sem adivinhação
+  tagline: Entenda o modelo público do POMI e construa sua primeira integração com a Data API ou o SDK TypeScript.
+  actions:
+    - text: Fazer o tutorial
+      link: /start/tutorial/
+      icon: rocket
+    - text: Explorar o modelo
+      link: /domain/overview/
+      icon: rocket
+      variant: secondary
+---
+
+import PortalVersions from "../../components/PortalVersions.astro";
+
+<PortalVersions />
+
+O POMI organiza dados acadêmicos públicos da Unicamp em contratos que podem ser
+consultados diretamente por HTTP ou pelo SDK TypeScript.
+
+O portal combina o contrato OpenAPI com fontes oficiais da Universidade. Assim,
+você pode distinguir o que a Unicamp define da forma como o POMI representa e
+normaliza essa informação.
+
+## Escolha seu caminho
+
+<div class="steps-grid">
+  <article class="step-card"><h3>Primeira integração</h3><p>Consulte uma disciplina, percorra a resposta e repita a operação com o SDK.</p><p><a href="/start/tutorial/">Começar o tutorial →</a></p></article>
+  <article class="step-card"><h3>Modelo de dados</h3><p>Entenda identidades, contexto de catálogo, currículos, turmas e períodos.</p><p><a href="/domain/overview/">Explorar o modelo →</a></p></article>
+  <article class="step-card"><h3>Contrato completo</h3><p>Inspecione parâmetros, responses e schemas no snapshot OpenAPI versionado.</p><p><a href="/reference/data-api/">Abrir a referência →</a></p></article>
+</div>

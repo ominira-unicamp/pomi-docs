@@ -1,0 +1,9 @@
+---
+import Footer from "@astrojs/starlight/components/Footer.astro";
+import OfficialSources from "./OfficialSources.astro";
+
+const sourceIds = Astro.locals.starlightRoute.entry.data.officialSources ?? [];
+---
+
+{sourceIds.length > 0 && <OfficialSources ids={sourceIds} />}
+<Footer />

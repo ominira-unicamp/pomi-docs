@@ -1,0 +1,6 @@
+{
+  "sourceId": "UNICAMP_DAC_TIMETABLE_MC426_2026_1",
+  "observedAt": "2026-09-27",
+  "class": { "code": "MC426", "nominalSeats": 3, "enrolledCount": 6 },
+  "expectedValid": true
+}

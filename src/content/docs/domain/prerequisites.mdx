@@ -1,0 +1,64 @@
+---
+title: Pré-requisitos
+description: Como interpretar alternativas, conjunções e formas de cumprimento.
+concepts: [CatalogCoursePrerequisiteItem]
+operations: [listCatalogCourses, getCatalogCourses]
+officialSources: [UNICAMP_DAC_DISCIPLINE_RULES, UNICAMP_DAC_RGCG]
+---
+
+import SourceRef from "../../../components/SourceRef.astro";
+import EnumSemantics from "../../../components/EnumSemantics.astro";
+import UnionSemantics from "../../../components/UnionSemantics.astro";
+import ConceptSchema from "../../../components/ConceptSchema.astro";
+
+O POMI preserva a lógica dos requisitos divulgados pela DAC e a representa de forma estrutural. A base institucional é descrita nas <SourceRef id="UNICAMP_DAC_DISCIPLINE_RULES" label="regras de disciplinas e pré-requisitos" />.
+
+O Regimento Geral distingue pré-requisitos plenos, parciais e especiais. Os
+nomes em maiúsculas usados pela API são normalizações do POMI; eles não
+substituem a redação institucional nem uma decisão acadêmica.
+
+<div class="takeaway">
+  <strong>Em uma frase:</strong> <code>any</code> representa alternativas e
+  cada grupo <code>all</code> reúne condições que precisam ser satisfeitas em
+  conjunto.
+</div>
+
+## A forma `any` de grupos `all`
+
+```json
+{
+  "any": [
+    { "all": ["A", "B"] },
+    { "all": ["C"] }
+  ]
+}
+```
+
+Leia de fora para dentro: basta satisfazer **qualquer** grupo de `any`, mas é preciso satisfazer **todos** os itens do grupo escolhido. O exemplo equivale a `(A AND B) OR C`.
+
+## Como interpretar cada item
+
+<UnionSemantics name="CatalogCoursePrerequisiteItem" title="Tipos de item" headingLevel="h3" />
+
+Um item `COURSE` aponta para outra identidade de disciplina por `courseId`.
+Esse ID é resolvido pelo POMI a partir do código institucional normalizado. Se
+a disciplina referenciada não foi resolvida, `courseId` pode ser `null`; o
+código publicado não deve ser substituído por uma correspondência aproximada.
+
+<EnumSemantics name="CatalogCoursePrerequisiteFulfillment" title="Forma de cumprimento" headingLevel="h3" />
+
+<UnionSemantics name="CatalogCourseSpecialRequirement" title="Requisitos especiais" headingLevel="h3" />
+
+## Notação original e representação POMI
+
+O scraper interpreta a notação publicada, normaliza códigos e separa condições
+de disciplina de requisitos especiais. A estrutura resultante pertence ao
+`CatalogCourse` daquele ano. Quando uma integração precisar exibir ou auditar a
+formulação oficial, ela deve conservar o vínculo com o catálogo e sua URL de
+origem.
+
+## Detalhes técnicos
+
+Os contratos completos ficam disponíveis sob demanda para não interromper a leitura conceitual.
+
+<ConceptSchema names={["CatalogCoursePrerequisiteItem", "CatalogCoursePrerequisiteFulfillment", "CatalogCourseSpecialRequirement"]} />

@@ -1,0 +1,44 @@
+---
+import provenance from "../../provenance/data-api.json";
+import registry from "../../sources/unicamp.json";
+import type { DataProvenance } from "../../scripts/provenance.ts";
+import type { OfficialSourceRegistry } from "../../scripts/source-registry.ts";
+
+interface Props { concept: "Course" | "Catalog" | "CatalogCourse" }
+const { concept } = Astro.props;
+const data = (provenance as DataProvenance).concepts[concept];
+const sourceRegistry = registry as OfficialSourceRegistry;
+const authorities = data.semanticAuthorities.map((authority) => {
+  const source = sourceRegistry.sources.find(({ id }) => id === authority.sourceId);
+  if (!source) throw new Error(`Unknown semantic authority: ${authority.sourceId}`);
+  const references = source.references?.filter(({ label }) =>
+    authority.referenceLabels?.includes(label)
+  ) ?? [];
+  return { source, references };
+});
+const nature = data.nature === "institutional-concept" ? "Conceito institucional" : "Abstração POMI";
+---
+
+<article class="definition-card" aria-labelledby={`definition-${concept}`}>
+  <p class="knowledge-kind">{nature}</p>
+  <h3 id={`definition-${concept}`}><code>{concept}</code></h3>
+  <p>{data.summary}</p>
+  <ul class="authority-list">
+    {authorities.map(({ source, references }) => (
+      <li>
+        <a href={source.url}>{source.title}</a>
+        {references.length > 0 && (
+          <span>
+            {" — "}
+            {references.map((reference) => {
+              const articles = reference.articles?.length
+                ? ` (arts. ${reference.articles.join(", ")})`
+                : "";
+              return `${reference.label}${articles}`;
+            }).join("; ")}
+          </span>
+        )}
+      </li>
+    ))}
+  </ul>
+</article>

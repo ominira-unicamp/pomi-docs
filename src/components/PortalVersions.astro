@@ -1,0 +1,11 @@
+---
+import manifest from "../../.cache/generated/data-domain-manifest.json";
+import packageInfo from "../../package.json";
+import sources from "../../contracts/sources.json";
+---
+
+<p class="portal-versions" aria-label="Versões documentadas">
+  <span>Docs <strong>{packageInfo.version}</strong></span>
+  <span>Data API <strong>{manifest.source.version}</strong></span>
+  <span>SDK <strong>{sources.sdk.version}</strong></span>
+</p>

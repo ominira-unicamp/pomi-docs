@@ -1,0 +1,36 @@
+---
+title: SDK TypeScript
+description: Cliente tipado para a Data API do POMI.
+concepts:
+  - Course
+operations:
+  - listCourses
+  - getCourses
+---
+
+import CodeFromFile from "../../../components/CodeFromFile.astro";
+
+Instale a versão documentada:
+
+```bash
+npm install @ominira/pomi-sdk@1.0.0-rc.1
+```
+
+## Cliente
+
+<CodeFromFile name="create-client.ts" />
+
+## Consulta e filtros
+
+<CodeFromFile name="list-courses.ts" />
+
+## Paginação
+
+<CodeFromFile name="paginate-courses.ts" />
+
+## Erros
+
+<CodeFromFile name="handle-errors.ts" />
+
+Esses arquivos passam pelo compilador TypeScript durante o CI. O código mostrado
+é exatamente o código validado.

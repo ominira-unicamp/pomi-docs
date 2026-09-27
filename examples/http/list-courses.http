@@ -1,0 +1,2 @@
+GET https://data.pomi.ominira.dev/courses?pageSize=20&filter[credits][gte]=4
+Accept: application/json

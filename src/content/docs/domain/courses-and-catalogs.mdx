@@ -1,0 +1,83 @@
+---
+title: Disciplinas e catálogos
+description: A diferença entre Course e CatalogCourse.
+concepts:
+  - Course
+  - Catalog
+  - CatalogCourse
+operations:
+  - listCourses
+  - getCourses
+  - listCatalogCourses
+  - getCatalogCourses
+officialSources:
+  - UNICAMP_DAC_RGCG
+  - UNICAMP_DAC_DISCIPLINE_RULES
+  - UNICAMP_DAC_CATALOG_2026
+  - UNICAMP_CCG_18_2026
+---
+
+import CourseCatalogComparison from "../../../components/CourseCatalogComparison.astro";
+import SourceRef from "../../../components/SourceRef.astro";
+import InstitutionalDefinition from "../../../components/InstitutionalDefinition.astro";
+import ConceptProvenance from "../../../components/ConceptProvenance.astro";
+import ConceptSchema from "../../../components/ConceptSchema.astro";
+import EnumSemantics from "../../../components/EnumSemantics.astro";
+
+Na Unicamp, “disciplina” é o conceito institucional. `Course` e
+`CatalogCourse` são duas formas complementares pelas quais o POMI representa
+esse conceito.
+
+<div class="takeaway">
+  <strong>Em uma frase:</strong> use <code>Course</code> para identificar a
+  disciplina e <code>CatalogCourse</code> para consultar como ela foi publicada
+  em uma edição específica do catálogo.
+</div>
+
+## O modelo em três partes
+
+<div class="definition-grid">
+  <InstitutionalDefinition concept="Course" />
+  <InstitutionalDefinition concept="CatalogCourse" />
+  <InstitutionalDefinition concept="Catalog" />
+</div>
+
+<CourseCatalogComparison />
+
+## O que depende do catálogo
+
+Pré-requisitos, carga horária, avaliação, frequência, ementa e bibliografia
+possuem contexto catalogal. Por isso, não presuma que essas propriedades são
+historicamente invariáveis apenas porque também existe um valor corrente em
+`Course`.
+
+Obrigatória ou eletiva não é uma característica intrínseca de `Course`: o
+caráter depende da participação da disciplina em determinado currículo.
+
+Essa separação acompanha o modo como a DAC publica disciplinas dentro de uma edição do catálogo, como o <SourceRef id="UNICAMP_DAC_CATALOG_2026" label="Catálogo de Graduação 2026" />. Em uma integração, mantenha `Course.id` como identidade e use `catalogYear` ou `catalogId` para selecionar o contexto institucional desejado.
+
+<div class="semantic-sections">
+  <EnumSemantics name="CourseOfferingPeriod" title="Período de oferecimento" headingLevel="h3" />
+  <EnumSemantics name="CourseEvaluationMode" title="Modo de avaliação" headingLevel="h3" />
+</div>
+
+## Limites de interpretação
+
+- O ano do catálogo é parte do significado do registro.
+- Não copie propriedades de um `CatalogCourse` para outro ano.
+- Ausência não significa permanência do último valor conhecido.
+- A proveniência descreve os fluxos possíveis do modelo, não uma trilha de execução por resposta individual.
+
+## Detalhes técnicos
+
+Abra apenas o conceito que precisa auditar. As tabelas distinguem valores publicados, normalizados, relacionados, derivados e gerados pelo POMI.
+
+<ConceptProvenance concept="Course" />
+
+<ConceptProvenance concept="Catalog" />
+
+<ConceptProvenance concept="CatalogCourse" />
+
+### Contratos públicos
+
+<ConceptSchema names={["Course", "Catalog", "CatalogCourse"]} />

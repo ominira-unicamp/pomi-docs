@@ -1,0 +1,44 @@
+---
+import manifest from "../../.cache/generated/data-domain-manifest.json";
+import ProgressiveDisclosure from "./ProgressiveDisclosure.astro";
+
+interface Props { names: string[] }
+const { names } = Astro.props;
+const concepts = names.map((name) => {
+  const concept = manifest.concepts[name as keyof typeof manifest.concepts];
+  if (!concept) throw new Error(`Unknown documented concept: ${name}`);
+  return { name, ...concept };
+});
+---
+
+<div class="schema-disclosures">
+  {concepts.map((concept) => (
+    <ProgressiveDisclosure title={`Contrato de ${concept.name}`} meta={`${concept.fields.length} campos`}>
+      <p>Schema <code>{concept.schema}</code>; identidade <code>{concept.identityFields.join(", ") || "não declarada"}</code>.</p>
+      {concept.fields.length > 0 && (
+        <div class="table-wrap" tabindex="0">
+          <table role="table">
+            <thead role="rowgroup"><tr role="row"><th role="columnheader">Campo</th><th role="columnheader">Tipo</th><th role="columnheader">Presença</th><th role="columnheader">Descrição</th></tr></thead>
+            <tbody role="rowgroup">
+              {concept.fields.map((field) => (
+                <tr role="row">
+                  <td role="cell" data-label="Campo"><code>{field.name}</code></td>
+                  <td role="cell" data-label="Tipo"><code>{field.type}</code>{field.nullable && " ou null"}</td>
+                  <td role="cell" data-label="Presença">{field.required ? "Obrigatório" : "Opcional"}</td>
+                  <td role="cell" data-label="Descrição">{field.description ?? "Sem descrição adicional no contrato."}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {concept.operations.length > 0 && (
+        <ul class="operation-list">
+          {concept.operations.map((operation) => (
+            <li><a href={operation.referenceHref}><code>{operation.method} {operation.path}</code></a></li>
+          ))}
+        </ul>
+      )}
+    </ProgressiveDisclosure>
+  ))}
+</div>

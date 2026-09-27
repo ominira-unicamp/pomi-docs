@@ -1,0 +1,26 @@
+---
+title: Turmas, horários e períodos acadêmicos
+description: Como uma disciplina se transforma em oferta concreta.
+concepts:
+  - Class
+  - ClassSchedule
+  - StudyPeriod
+  - CalendarEvent
+officialSources:
+  - UNICAMP_DAC_TIMETABLE_MC202_2026_2
+  - UNICAMP_DAC_TIMETABLE_MC041_2026_1
+  - UNICAMP_DAC_TIMETABLE_MC426_2026_1
+  - UNICAMP_DAC_CALENDAR_2026
+  - UNICAMP_DAC_ENROLLMENT
+---
+
+
+`Class` é uma oferta concreta de uma disciplina em um `StudyPeriod`.
+`ClassSchedule` descreve horários e locais conhecidos dessa oferta.
+
+Uma turma sem horário cadastrado continua sendo uma turma válida. Uma turma pode
+ter múltiplos docentes, e o total de matriculados pode superar o número nominal
+de vagas. Vaga disponível também não equivale a garantia de matrícula.
+
+O contrato atual de `StudyPeriod` possui data inicial, mas não data final
+explícita. Consumidores não devem inferir o término pelo calendário civil.

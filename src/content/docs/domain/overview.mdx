@@ -1,0 +1,27 @@
+---
+title: Visão geral do domínio
+description: Fronteiras entre identidade, catálogo, currículo e oferta.
+concepts:
+  - Course
+  - CatalogCourse
+  - CatalogProgram
+  - CurriculumSuggestion
+  - Class
+  - StudyPeriod
+officialSources:
+  - UNICAMP_DAC_RGCG
+  - UNICAMP_DAC_ACADEMIC_STRUCTURE
+---
+
+
+```text
+Course ──> CatalogCourse ──> Catalog
+   │
+   └─────> Class ──> ClassSchedule
+                 └─> StudyPeriod
+
+Program ──> CatalogProgram ──> CurriculumSuggestion
+```
+
+Schemas públicos não são tabelas Prisma, e conceitos do POMI nem sempre possuem
+o mesmo nome nas fontes oficiais. As páginas seguintes explicam essas fronteiras.

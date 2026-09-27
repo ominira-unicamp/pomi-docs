@@ -1,0 +1,495 @@
+{
+  "schemaVersion": 2,
+  "sources": [
+    {
+      "id": "UNICAMP_DAC_RGCG",
+      "priority": "P0",
+      "authority": "normative",
+      "title": "Regimento Geral de Graduação",
+      "issuer": "Universidade Estadual de Campinas — Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/portal/graduacao/regimento-geral",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "institutional-regulation",
+      "concepts": [
+        "Course",
+        "Catalog",
+        "Program",
+        "StudyPeriod",
+        "Calendar",
+        "prerequisites",
+        "curriculum"
+      ],
+      "cadence": "irregular",
+      "access": "public",
+      "licenseNote": "nenhuma licença aberta específica identificada",
+      "provenanceNote": "Regras acadêmicas gerais são interpretadas a partir do Regimento Geral de Graduação.",
+      "references": [
+        {
+          "label": "Definição e características das disciplinas",
+          "section": "Capítulo II",
+          "articles": ["13"]
+        },
+        {
+          "label": "Pré-requisitos",
+          "section": "Capítulo II",
+          "articles": ["25", "26"]
+        },
+        {
+          "label": "Vetor de carga horária",
+          "section": "Capítulo II",
+          "articles": ["27"]
+        }
+      ],
+      "temporalScope": {
+        "type": "consolidated-regulation",
+        "dimensions": []
+      }
+    },
+    {
+      "id": "UNICAMP_CONSU_A_012_2025",
+      "priority": "P0",
+      "authority": "normative",
+      "title": "Deliberação CONSU-A-012/2025",
+      "issuer": "Conselho Universitário / Procuradoria Geral",
+      "url": "https://www.pg.unicamp.br/norma/32088/0",
+      "publishedAt": "2025-05-27",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "institutional-regulation",
+      "concepts": [
+        "Catalog",
+        "CatalogProgram"
+      ],
+      "cadence": "irregular",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "O Catálogo possui fundamento institucional e não é um agrupamento criado pelo POMI."
+    },
+    {
+      "id": "UNICAMP_CCG_18_2026",
+      "priority": "P0",
+      "authority": "normative",
+      "title": "Deliberação CCG nº 18/2026",
+      "issuer": "Pró-Reitoria de Graduação — Comissão Central de Graduação",
+      "url": "https://www.prg.unicamp.br/arquivo/uploads/del-ccg-182026-docx-assinado/",
+      "publishedAt": "2026-05-21",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "curriculum-regulation",
+      "concepts": [
+        "Course",
+        "CatalogCourse",
+        "CourseRequirement"
+      ],
+      "cadence": "irregular",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Obrigatoriedade e eletividade são relações curriculares, não propriedades intrínsecas de Course."
+    },
+    {
+      "id": "UNICAMP_CCG_28_2025",
+      "priority": "P0",
+      "authority": "normative",
+      "title": "Deliberação CCG nº 28/2025",
+      "issuer": "Pró-Reitoria de Graduação — Comissão Central de Graduação",
+      "url": "https://www.prg.unicamp.br/wp-content/uploads/sites/42/2025/08/Del_CCG_282025.pdf",
+      "publishedAt": "2025-08-14",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "curriculum-regulation",
+      "concepts": [
+        "Catalog",
+        "CatalogCourse"
+      ],
+      "cadence": "irregular",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Regras de completude do catálogo dependem da versão temporal."
+    },
+    {
+      "id": "UNICAMP_PRG_TRANSLATIONS_2025",
+      "priority": "P1",
+      "authority": "complementary",
+      "title": "Orientações sobre o processo de traduções dos Catálogos",
+      "issuer": "Pró-Reitoria de Graduação — CCG",
+      "url": "https://www.prg.unicamp.br/comissoes/ccg/orientacoes/",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "institutional-guidance",
+      "concepts": [
+        "Course",
+        "CatalogCourse"
+      ],
+      "cadence": "annual-or-irregular",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Traduções oficiais devem ser distinguidas de traduções produzidas pelo POMI."
+    },
+    {
+      "id": "UNICAMP_DAC_CATALOG_INDEX",
+      "priority": "P0",
+      "authority": "complementary",
+      "title": "Catálogos de cursos — Graduação",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/portal/graduacao/catalogos-de-cursos",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "official-registry-index",
+      "concepts": [
+        "Catalog"
+      ],
+      "cadence": "annual",
+      "access": "public",
+      "licenseNote": "catálogos vinculados possuem aviso de direitos reservados",
+      "provenanceNote": "A série histórica de catálogos é descoberta pelo índice oficial da DAC.",
+      "temporalScope": {
+        "type": "annual-series",
+        "dimensions": ["catalogYear"]
+      }
+    },
+    {
+      "id": "UNICAMP_DAC_CATALOG_2026",
+      "priority": "P0",
+      "authority": "registry",
+      "title": "Catálogo dos Cursos de Graduação 2026",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/sistemas/catalogos/grad/catalogo2026/index.html",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "academic-catalog",
+      "concepts": [
+        "Catalog",
+        "CatalogCourse",
+        "CatalogProgram",
+        "CurriculumSuggestion"
+      ],
+      "cadence": "annual-with-in-year-amendments",
+      "access": "public",
+      "licenseNote": "Todos os direitos reservados",
+      "provenanceNote": "Dados curriculares são normalizados a partir do catálogo oficial correspondente ao ano.",
+      "temporalScope": {
+        "type": "catalog-edition",
+        "dimensions": ["catalogYear"]
+      }
+    },
+    {
+      "id": "UNICAMP_DAC_PROGRAM_42_2026",
+      "priority": "P0",
+      "authority": "registry",
+      "title": "Curso 42 — Ciência da Computação — 2026",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/sistemas/catalogos/grad/catalogo2026/cursos/42g/index.html",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "catalog-program",
+      "concepts": [
+        "Program",
+        "CatalogProgram"
+      ],
+      "cadence": "per-catalog",
+      "access": "public",
+      "licenseNote": "Todos os direitos reservados",
+      "provenanceNote": "Regras de integralização e limite de créditos pertencem ao programa no catálogo."
+    },
+    {
+      "id": "UNICAMP_DAC_CURRICULUM_42_2026",
+      "priority": "P0",
+      "authority": "registry",
+      "title": "Ciência da Computação — Currículo Pleno 2026",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/sistemas/catalogos/grad/catalogo2026/cursos/42g/curriculo.html",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "full-curriculum",
+      "concepts": [
+        "CatalogProgram",
+        "CourseBlock",
+        "CourseRequirement"
+      ],
+      "cadence": "per-catalog",
+      "access": "public",
+      "licenseNote": "Todos os direitos reservados",
+      "provenanceNote": "O Currículo Pleno define requisitos de integralização."
+    },
+    {
+      "id": "UNICAMP_DAC_CURRICULUM_SUGGESTION_42_2026",
+      "priority": "P0",
+      "authority": "registry",
+      "title": "Ciência da Computação — Proposta para Cumprimento de Currículo 2026",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/sistemas/catalogos/grad/catalogo2026/cursos/42g/sugestao.html",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "curriculum-suggestion",
+      "concepts": [
+        "CurriculumSuggestion",
+        "SemesterSuggestion"
+      ],
+      "cadence": "per-catalog",
+      "access": "public",
+      "licenseNote": "Todos os direitos reservados",
+      "provenanceNote": "A proposta de cumprimento é uma sequência sugerida, não uma exigência adicional."
+    },
+    {
+      "id": "UNICAMP_DAC_DISCIPLINES_MC_2026",
+      "priority": "P0",
+      "authority": "registry",
+      "title": "Catálogo 2026 — Disciplinas MC",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/sistemas/catalogos/grad/catalogo2026/disciplinas/mc.html",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "catalog-course-registry",
+      "concepts": [
+        "Course",
+        "CatalogCourse"
+      ],
+      "cadence": "per-catalog",
+      "access": "public",
+      "licenseNote": "Todos os direitos reservados",
+      "provenanceNote": "Propriedades curriculares da disciplina são associadas ao ano de catálogo.",
+      "temporalScope": {
+        "type": "catalog-edition",
+        "dimensions": ["catalogYear", "coursePrefix"]
+      }
+    },
+    {
+      "id": "UNICAMP_DAC_CATALOGO_PROPOSTO",
+      "priority": "P1",
+      "authority": "complementary",
+      "title": "Catálogo Proposto",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/portal/catalogo-proposto",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "catalog-process",
+      "concepts": [
+        "Catalog",
+        "CatalogCourse"
+      ],
+      "cadence": "annual-cycle",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Somente o catálogo oficialmente publicado deve ser tratado como versão aprovada."
+    },
+    {
+      "id": "UNICAMP_DAC_DISCIPLINE_RULES",
+      "priority": "P0",
+      "authority": "complementary",
+      "title": "Disciplinas, Carga Horária e Pré-requisito",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/portal/vida-academica/graduacao/estruturacurricular/disciplinas-carga-horaria-e-pre-requisito",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "official-domain-explanation",
+      "concepts": [
+        "Course",
+        "CatalogCourse",
+        "prerequisites"
+      ],
+      "cadence": "slow",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Esta fonte contextualiza publicamente as propriedades curriculares da disciplina.",
+      "references": [
+        {
+          "label": "Disciplinas, carga horária e pré-requisito"
+        }
+      ],
+      "temporalScope": {
+        "type": "current-state",
+        "dimensions": []
+      }
+    },
+    {
+      "id": "UNICAMP_DAC_ACADEMIC_STRUCTURE",
+      "priority": "P0",
+      "authority": "complementary",
+      "title": "Estrutura Acadêmica",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/portal/vida-academica/graduacao/estrutura-academica",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "official-domain-explanation",
+      "concepts": [
+        "Catalog",
+        "CatalogProgram",
+        "CurriculumSuggestion"
+      ],
+      "cadence": "slow",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Ano de catálogo é parte do contexto curricular."
+    },
+    {
+      "id": "UNICAMP_DAC_SPECIALIZATIONS",
+      "priority": "P1",
+      "authority": "complementary",
+      "title": "Habilitações, Ênfases e Certificado de Estudos",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/portal/vida-academica/graduacao/estruturacurricular/habilitacoes-enfases-e-certificado-de-estudos",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "official-domain-explanation",
+      "concepts": [
+        "Specialization",
+        "CatalogProgram"
+      ],
+      "cadence": "slow",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Habilitação, ênfase e certificado possuem significados institucionais distintos."
+    },
+    {
+      "id": "UNICAMP_DAC_PROGRAMS",
+      "priority": "P0",
+      "authority": "registry",
+      "title": "Cursos Regulares de Graduação",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/portal/graduacao/cursos",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "program-registry",
+      "concepts": [
+        "Program",
+        "Unit",
+        "Specialization"
+      ],
+      "cadence": "slow",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Códigos institucionais de curso e habilitação são preservados independentemente dos IDs POMI."
+    },
+    {
+      "id": "UNICAMP_DAC_TIMETABLE_MC202_2026_2",
+      "priority": "P0",
+      "authority": "registry",
+      "title": "MC202 — Estruturas de Dados — 2S/2026",
+      "issuer": "Diretoria Acadêmica — Caderno de Horários",
+      "url": "https://www.dac.unicamp.br/portal/caderno-de-horarios/2026/2/S/G/IC/MC202",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "class-offering",
+      "concepts": [
+        "Class",
+        "ClassSchedule",
+        "Room",
+        "Professor",
+        "StudyPeriod"
+      ],
+      "cadence": "high-during-enrollment",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Turmas e horários são oferecimentos concretos, separados do Catálogo."
+    },
+    {
+      "id": "UNICAMP_DAC_TIMETABLE_MC732_2026_1",
+      "priority": "P0",
+      "authority": "registry",
+      "title": "MC732 — Projeto de Sistemas Computacionais — 1S/2026",
+      "issuer": "Diretoria Acadêmica — Caderno de Horários",
+      "url": "https://www.dac.unicamp.br/portal/caderno-de-horarios/2026/1/S/G/IC/MC732",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "prerequisite-test-fixture",
+      "concepts": [
+        "CatalogCourse",
+        "prerequisites"
+      ],
+      "cadence": "per-offering-and-catalog",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Caso de referência para testes do parser de pré-requisitos."
+    },
+    {
+      "id": "UNICAMP_DAC_TIMETABLE_MC041_2026_1",
+      "priority": "P1",
+      "authority": "registry",
+      "title": "MC041 — Estágio de Iniciação Científica II — 1S/2026",
+      "issuer": "Diretoria Acadêmica — Caderno de Horários",
+      "url": "https://www.dac.unicamp.br/portal/caderno-de-horarios/2026/1/S/G/IC/MC041",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "edge-case",
+      "concepts": [
+        "Class",
+        "ClassSchedule"
+      ],
+      "cadence": "semester",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Turma sem horário cadastrado é um estado oficialmente representável."
+    },
+    {
+      "id": "UNICAMP_DAC_TIMETABLE_MC426_2026_1",
+      "priority": "P1",
+      "authority": "registry",
+      "title": "MC426 — Engenharia de Software — 1S/2026",
+      "issuer": "Diretoria Acadêmica — Caderno de Horários",
+      "url": "https://www.dac.unicamp.br/portal/caderno-de-horarios/2026/1/S/G/IC/MC426",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "edge-case",
+      "concepts": [
+        "Class"
+      ],
+      "cadence": "high-during-enrollment",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Número nominal de vagas e matriculados não formam uma invariant simples."
+    },
+    {
+      "id": "UNICAMP_DAC_CALENDAR_2026",
+      "priority": "P0",
+      "authority": "registry",
+      "title": "Calendário Escolar — Graduação 2026",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/portal/calendario/2026/graduacao",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "academic-calendar",
+      "concepts": [
+        "CalendarEvent",
+        "StudyPeriod"
+      ],
+      "cadence": "annual-with-amendments",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Datas acadêmicas são derivadas do calendário oficial do respectivo ano."
+    },
+    {
+      "id": "UNICAMP_DAC_CATALOG_SCHEDULE_2026",
+      "priority": "P1",
+      "authority": "complementary",
+      "title": "Cronograma de elaboração do Catálogo 2026",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/portal/calendario/2025/graduacao/periodos-especificos/catalogo-dos-cursos-de-graduacao",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "catalog-lifecycle",
+      "concepts": [
+        "Catalog"
+      ],
+      "cadence": "annual",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "O catálogo de um ano é produzido e publicado no ciclo acadêmico anterior."
+    },
+    {
+      "id": "UNICAMP_DAC_ENROLLMENT",
+      "priority": "P1",
+      "authority": "complementary",
+      "title": "Matrícula em Disciplinas",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/portal/vida-academica/graduacao/matricula/matricula-em-disciplinas",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "official-process",
+      "concepts": [
+        "Class",
+        "enrollment",
+        "reservations"
+      ],
+      "cadence": "semester-review",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Vagas, reservas e elegibilidade são conceitos diferentes."
+    },
+    {
+      "id": "UNICAMP_DAC_ASSESSMENT",
+      "priority": "P1",
+      "authority": "complementary",
+      "title": "Avaliação e Frequência",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/portal/vida-academica/graduacao/avaliacao-e-frequencia",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "official-domain-explanation",
+      "concepts": [
+        "CatalogCourse",
+        "Class"
+      ],
+      "cadence": "slow",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Modo de avaliação do catálogo deve ser separado dos critérios definidos por turma."
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "sourceId": "UNICAMP_DAC_TIMETABLE_MC732_2026_1",
+  "observedAt": "2026-09-27",
+  "representation": {
+    "any": [
+      { "all": ["MC102", "MC202"] },
+      { "all": ["AA200"] }
+    ]
+  },
+  "expected": "(MC102 AND MC202) OR AA200"
+}

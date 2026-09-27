@@ -1,0 +1,77 @@
+---
+title: Fontes, autoridade e proveniência
+description: Como separar regra institucional, publicação oficial, transformação POMI e contrato.
+officialSources:
+  - UNICAMP_DAC_RGCG
+  - UNICAMP_DAC_CATALOG_INDEX
+  - UNICAMP_DAC_CATALOG_2026
+---
+
+import SourceRef from "../../../components/SourceRef.astro";
+
+Os dados do POMI combinam fontes oficiais com uma representação própria. Para
+interpretá-los corretamente, separe quatro camadas:
+
+```text
+norma institucional
+        ↓ define significado e regras
+publicação operacional oficial
+        ↓ materializa um ano, período ou data
+pipeline POMI
+        ↓ coleta, interpreta, normaliza e relaciona
+contrato OpenAPI
+        ↓ define o que a API entrega
+```
+
+## Autoridade semântica
+
+É a fonte que explica o significado institucional. O
+<SourceRef id="UNICAMP_DAC_RGCG" label="Regimento Geral de Graduação" />,
+por exemplo, define disciplinas e pré-requisitos. Ele não define nomes como
+`CatalogCourse`, nem os IDs internos usados pelo POMI.
+
+## Origem operacional
+
+É a publicação da qual um valor concreto foi coletado. A série de
+<SourceRef id="UNICAMP_DAC_CATALOG_INDEX" label="Catálogos de Graduação" />
+é organizada por ano. Uma edição como o
+<SourceRef id="UNICAMP_DAC_CATALOG_2026" label="Catálogo 2026" /> materializa
+nomes, cargas, requisitos e outras características daquela versão.
+
+## Transformação POMI
+
+O POMI classifica a linhagem documental dos campos com um vocabulário pequeno:
+
+| Classificação | Significado |
+| --- | --- |
+| `source` | valor preservado da publicação oficial |
+| `normalized` | valor padronizado pelo POMI |
+| `derived` | valor calculado a partir de outro campo |
+| `linked` | relação resolvida por uma chave externa |
+| `pomi-generated` | identificador ou valor criado pelo POMI |
+| `parsed` | estrutura interpretada a partir de texto |
+| `aggregated` | contagem ou composição de registros relacionados |
+| `unspecified` | origem ainda não formalizada |
+
+Essa classificação descreve os fluxos possíveis do modelo. Ela não comprova,
+para cada resposta individual, qual execução do scraper produziu o registro.
+
+## Contrato público
+
+O OpenAPI é a autoridade para campos, tipos, nulabilidade, enums, variantes,
+operações, filtros e paginação. As tabelas contratuais deste portal são geradas
+a partir desse snapshot; o texto editorial explica significado e limitações.
+
+## Quatro tempos diferentes
+
+Não trate como sinônimos:
+
+```text
+frequência de publicação da Unicamp
+≠ janela coletada pelo scraper
+≠ frequência do job POMI
+≠ momento da última sincronização
+```
+
+O Catálogo possui edições anuais. Isso não permite afirmar, sem evidência
+operacional adicional, com que frequência o POMI executa a respectiva injection.

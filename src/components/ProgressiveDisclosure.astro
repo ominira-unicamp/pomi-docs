@@ -1,0 +1,19 @@
+---
+interface Props {
+  title: string;
+  meta?: string;
+  open?: boolean;
+}
+
+const { title, meta, open = false } = Astro.props;
+---
+
+<details class="progressive-disclosure" open={open}>
+  <summary>
+    <span>{title}</span>
+    {meta && <small>{meta}</small>}
+  </summary>
+  <div class="progressive-disclosure__content">
+    <slot />
+  </div>
+</details>

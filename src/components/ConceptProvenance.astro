@@ -1,0 +1,69 @@
+---
+import provenance from "../../provenance/data-api.json";
+import registry from "../../sources/unicamp.json";
+import type { DataProvenance } from "../../scripts/provenance.ts";
+import type { OfficialSourceRegistry } from "../../scripts/source-registry.ts";
+import ProgressiveDisclosure from "./ProgressiveDisclosure.astro";
+
+interface Props { concept: "Course" | "Catalog" | "CatalogCourse" }
+const { concept } = Astro.props;
+const data = (provenance as DataProvenance).concepts[concept];
+const originLabels: Record<string, string> = {
+  source: "Fonte",
+  normalized: "Normalizado",
+  derived: "Derivado",
+  linked: "Relacionado",
+  "pomi-generated": "Gerado pelo POMI",
+  parsed: "Interpretado",
+  aggregated: "Agregado",
+  unspecified: "Não especificado"
+};
+const sourceById = new Map(
+  (registry as OfficialSourceRegistry).sources.map((source) => [source.id, source])
+);
+const fieldCount = Object.keys(data.fields).length;
+---
+
+<ProgressiveDisclosure title={`Proveniência de ${concept}`} meta={`${fieldCount} campos documentados`}>
+  <div class="source-grid source-grid--compact">
+    {data.operationalSources.map((origin) => {
+      const source = sourceById.get(origin.sourceId);
+      if (!source) throw new Error(`Unknown operational source: ${origin.sourceId}`);
+      return (
+        <article class="source-card">
+          <p class="source-kind">Fonte operacional</p>
+          <h3><a href={source.url}>{source.title}</a></h3>
+          <p><code>{origin.collector}</code> → <code>{origin.injection}</code></p>
+        </article>
+      );
+    })}
+  </div>
+  <div class="table-wrap" tabindex="0">
+    <table role="table">
+      <thead role="rowgroup"><tr role="row"><th role="columnheader">Campo</th><th role="columnheader">Origem</th><th role="columnheader">Detalhe</th></tr></thead>
+      <tbody role="rowgroup">
+        {Object.entries(data.fields).flatMap(([field, value]) =>
+          value.lineage.map((lineage, index) => {
+            const source = lineage.sourceId ? sourceById.get(lineage.sourceId) : undefined;
+            const details = [
+              lineage.sourceField ? `campo ${lineage.sourceField}` : "",
+              lineage.note ?? ""
+            ].filter(Boolean).join(" — ");
+            return (
+              <tr role="row">
+                <td role="cell" data-label="Campo">{index === 0 ? <code>{field}</code> : <span aria-label={`Outra origem de ${field}`}>↳</span>}</td>
+                <td role="cell" data-label="Origem">{originLabels[lineage.origin] ?? lineage.origin}</td>
+                <td role="cell" data-label="Detalhe">
+                  {source && <><a href={source.url}>{source.title}</a>{details && " — "}</>}
+                  {details || (!source ? "Definido pelo modelo POMI." : "")}
+                </td>
+              </tr>
+            );
+          })
+        )}
+      </tbody>
+    </table>
+  </div>
+  <h3>Limitações desta linhagem</h3>
+  <ul>{data.limitations.map((limitation) => <li>{limitation}</li>)}</ul>
+</ProgressiveDisclosure>
