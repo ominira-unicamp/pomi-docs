@@ -1,0 +1,75 @@
+---
+import { Code } from "astro:components";
+import manifest from "../../.cache/generated/data-domain-manifest.json";
+import type { DomainManifest } from "../../scripts/domain-manifest.ts";
+import {
+  conceptSlug,
+  listOperation,
+  renderFilterExample,
+  sdkOperationSignature,
+  type TechnicalFilterExample
+} from "../../scripts/technical-surface.ts";
+import ProgressiveDisclosure from "./ProgressiveDisclosure.astro";
+
+interface Props {
+  concept: string;
+  title: string;
+  description: string;
+  filterExample: TechnicalFilterExample;
+}
+
+const { concept, title, description, filterExample } = Astro.props;
+const documented = (manifest as DomainManifest).concepts[concept];
+if (!documented) throw new Error(`Unknown technical concept: ${concept}`);
+const slug = conceptSlug(concept);
+const listing = listOperation(documented);
+const filterExampleCode = renderFilterExample(documented, filterExample);
+const capabilities = [
+  listing?.filters ? `${listing.filters.fields.length} filtros` : null,
+  listing?.sort ? `${listing.sort.fields.length} campos de ordenação` : null,
+  listing?.pagination ? "Paginação" : null
+].filter((value): value is string => value !== null);
+---
+
+<article id={`using-${slug}`} class="technical-surface" aria-labelledby={`using-${slug}-title`}>
+  <header class="technical-surface__header">
+    <div>
+      <p class="source-kind"><code>{concept}</code></p>
+      <h3 id={`using-${slug}-title`}>{title}</h3>
+      <p>{description}</p>
+    </div>
+    <div class="capability-list" aria-label="Capacidades da operação de listagem">
+      {capabilities.map((capability) => <span>{capability}</span>)}
+    </div>
+  </header>
+
+  <div class="primary-operation">
+    <div id={`using-${slug}-sdk`}><span>SDK TypeScript</span><code>{listing ? sdkOperationSignature(listing) : "Não exposto pelo SDK"}</code></div>
+    <div id={`using-${slug}-http`}><span>HTTP</span><code>{listing?.method} {listing?.path}</code></div>
+  </div>
+
+  {listing?.filters && (
+    <ProgressiveDisclosure id={`example-${slug}`} title="Ver exemplo" meta="SDK e HTTP equivalentes">
+      <div class="technical-example">
+        <p><strong>{filterExample.label}</strong></p>
+        <div>
+          <div>
+            <p class="source-kind">SDK TypeScript</p>
+            <Code code={filterExampleCode.sdk} lang="ts" theme="horizon" />
+          </div>
+          <div>
+            <p class="source-kind">HTTP</p>
+            <Code code={filterExampleCode.http} lang="http" theme="horizon" />
+          </div>
+        </div>
+      </div>
+    </ProgressiveDisclosure>
+  )}
+
+  <nav class="technical-links" aria-label={`Atalhos técnicos de ${concept}`}>
+    <a href={`#contract-${slug}`}>Ver campos</a>
+    {listing?.filters && <a href={`#filters-${slug}`}>Ver filtros</a>}
+    <a href="/sdk/getting-started/">Usar o SDK</a>
+    <a href="https://data.pomi.ominira.dev/docs">API Reference ↗</a>
+  </nav>
+</article>

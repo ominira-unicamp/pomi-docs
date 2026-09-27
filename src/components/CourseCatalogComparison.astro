@@ -11,21 +11,26 @@ const relationshipExample = {
   catalogCourse: {
     id: snapshot.catalogCourse.id,
     catalogYear: snapshot.catalogCourse.catalogYear,
-    courseId: snapshot.catalogCourse.courseId
+    courseId: snapshot.catalogCourse.courseId,
+    catalogId: snapshot.catalogCourse.catalogId
+  },
+  catalog: {
+    id: snapshot.catalogCourse.catalogId,
+    year: snapshot.catalogCourse.catalogYear
   }
 };
 ---
 
 <div class="relationship-strip" aria-label="Relação entre Course, CatalogCourse e Catalog">
-  <div><code>Course</code><small>identidade</small></div>
+  <div><a href="#course"><code>Course</code></a><small>identidade</small></div>
   <span aria-hidden="true">←</span>
-  <div class="relationship-strip__center"><code>CatalogCourse</code><small>registro contextual</small></div>
+  <div class="relationship-strip__center"><a href="#catalog-course"><code>CatalogCourse</code></a><small>registro contextual</small></div>
   <span aria-hidden="true">→</span>
-  <div><code>Catalog</code><small>edição anual</small></div>
+  <div><a href="#catalog"><code>Catalog</code></a><small>edição anual</small></div>
 </div>
 
 <div class="relationship-example">
-  <p><strong>O vínculo está nos IDs:</strong> <code>catalogCourse.courseId</code> aponta para <code>course.id</code>.</p>
+  <p><strong>Os vínculos estão nos IDs:</strong> <code>CatalogCourse.courseId → Course.id</code> e <code>CatalogCourse.catalogId → Catalog.id</code>.</p>
   <Code code={JSON.stringify(relationshipExample, null, 2)} lang="json" theme="horizon" />
 </div>
 

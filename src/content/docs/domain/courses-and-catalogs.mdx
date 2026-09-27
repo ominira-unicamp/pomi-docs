@@ -8,6 +8,8 @@ concepts:
 operations:
   - listCourses
   - getCourses
+  - listCatalogs
+  - getCatalogs
   - listCatalogCourses
   - getCatalogCourses
 officialSources:
@@ -21,7 +23,8 @@ import CourseCatalogComparison from "../../../components/CourseCatalogComparison
 import SourceRef from "../../../components/SourceRef.astro";
 import InstitutionalDefinition from "../../../components/InstitutionalDefinition.astro";
 import ConceptProvenance from "../../../components/ConceptProvenance.astro";
-import ConceptSchema from "../../../components/ConceptSchema.astro";
+import ConceptTechnicalSurface from "../../../components/ConceptTechnicalSurface.astro";
+import ConceptTechnicalReference from "../../../components/ConceptTechnicalReference.astro";
 import EnumSemantics from "../../../components/EnumSemantics.astro";
 
 Na Unicamp, “disciplina” é o conceito institucional. `Course` e
@@ -34,6 +37,19 @@ esse conceito.
   em uma edição específica do catálogo.
 </div>
 
+<nav class="contextual-nav" aria-label="Seções desta página">
+  <a href="#overview">Visão geral</a>
+  <a href="#model">Modelo</a>
+  <a href="#usage">Como usar</a>
+  <a href="#interpretation">Interpretação</a>
+  <a href="#technical-reference">Referência</a>
+  <a href="#provenance">Proveniência</a>
+</nav>
+
+<span id="overview" class="section-anchor" aria-hidden="true"></span>
+
+<span id="model" class="section-anchor" aria-hidden="true"></span>
+
 ## O modelo em três partes
 
 <div class="definition-grid">
@@ -43,6 +59,51 @@ esse conceito.
 </div>
 
 <CourseCatalogComparison />
+
+<span id="usage" class="section-anchor" aria-hidden="true"></span>
+
+## Como usar esses dados
+
+Escolha a intenção que corresponde ao dado procurado. Em cada opção, SDK e HTTP
+são duas interfaces equivalentes para a mesma operação da Data API.
+
+<ConceptTechnicalSurface
+  concept="Course"
+  title="Consultar disciplinas"
+  description="Use a identidade normalizada para localizar disciplinas independentemente de uma edição do catálogo."
+  filterExample={{
+    label: "Disciplinas com pelo menos 4 créditos oferecidas pelo IC",
+    expressions: [
+      { field: "credits", operator: "gte", value: 4 },
+      { field: "unit.code", operator: "eq", value: "IC" }
+    ]
+  }}
+/>
+
+<ConceptTechnicalSurface
+  concept="Catalog"
+  title="Explorar um catálogo"
+  description="Use a edição anual para encontrar o recorte institucional que contextualiza os demais registros."
+  filterExample={{
+    label: "Catálogo da edição de 2026",
+    expressions: [{ field: "year", operator: "eq", value: 2026 }]
+  }}
+/>
+
+<ConceptTechnicalSurface
+  concept="CatalogCourse"
+  title="Consultar uma disciplina em um catálogo"
+  description="Use o registro contextual para acessar a publicação, avaliação e requisitos de uma edição específica."
+  filterExample={{
+    label: "MC732 na edição de 2026 do catálogo",
+    expressions: [
+      { field: "catalogYear", operator: "eq", value: 2026 },
+      { field: "courseCode", operator: "eq", value: "MC732" }
+    ]
+  }}
+/>
+
+<span id="interpretation" class="section-anchor" aria-hidden="true"></span>
 
 ## O que depende do catálogo
 
@@ -68,7 +129,32 @@ Essa separação acompanha o modo como a DAC publica disciplinas dentro de uma e
 - Ausência não significa permanência do último valor conhecido.
 - A proveniência descreve os fluxos possíveis do modelo, não uma trilha de execução por resposta individual.
 
-## Detalhes técnicos
+<span id="technical-reference" class="section-anchor" aria-hidden="true"></span>
+
+## Referência técnica
+
+Os blocos abaixo são produzidos a partir do contrato e dos metadados públicos.
+Abra somente o conceito cujos campos ou capacidades precisa consultar.
+
+<ConceptTechnicalReference concept="Course" />
+
+<ConceptTechnicalReference concept="Catalog" />
+
+<ConceptTechnicalReference
+  concept="CatalogCourse"
+  fieldGroups={[
+    { title: "Identificação", fields: ["id", "catalogId", "catalogYear", "courseId"] },
+    { title: "Publicação no catálogo", fields: ["code", "name", "coordinator"] },
+    { title: "Carga acadêmica", fields: ["credits", "workload"] },
+    { title: "Oferecimento e avaliação", fields: ["offeringPeriod", "evaluation", "finalExam", "minimumAttendancePercent"] },
+    { title: "Conteúdo acadêmico", fields: ["syllabus", "bibliography", "sourceUrl"] },
+    { title: "Requisitos", fields: ["prerequisites"] }
+  ]}
+/>
+
+<span id="provenance" class="section-anchor" aria-hidden="true"></span>
+
+## Proveniência
 
 Abra apenas o conceito que precisa auditar. As tabelas distinguem valores publicados, normalizados, relacionados, derivados e gerados pelo POMI.
 
@@ -78,6 +164,13 @@ Abra apenas o conceito que precisa auditar. As tabelas distinguem valores public
 
 <ConceptProvenance concept="CatalogCourse" />
 
-### Contratos públicos
+## Contratos públicos
 
-<ConceptSchema names={["Course", "Catalog", "CatalogCourse"]} />
+Para parâmetros, responses, erros e schemas completos, consulte a
+[API Reference da Data API](https://data.pomi.ominira.dev/docs).
+
+## Próximos passos
+
+- [Pré-requisitos](/domain/prerequisites/): entenda como as dependências são representadas.
+- [Currículos](/domain/curricula/): veja como disciplinas participam da formação.
+- [Turmas e períodos](/domain/classes-and-periods/): acompanhe a passagem da disciplina para um oferecimento concreto.

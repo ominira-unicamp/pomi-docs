@@ -3,6 +3,7 @@ import provenance from "../../provenance/data-api.json";
 import registry from "../../sources/unicamp.json";
 import type { DataProvenance } from "../../scripts/provenance.ts";
 import type { OfficialSourceRegistry } from "../../scripts/source-registry.ts";
+import { conceptSlug } from "../../scripts/technical-surface.ts";
 
 interface Props { concept: "Course" | "Catalog" | "CatalogCourse" }
 const { concept } = Astro.props;
@@ -17,11 +18,12 @@ const authorities = data.semanticAuthorities.map((authority) => {
   return { source, references };
 });
 const nature = data.nature === "institutional-concept" ? "Conceito institucional" : "Abstração POMI";
+const slug = conceptSlug(concept);
 ---
 
-<article class="definition-card" aria-labelledby={`definition-${concept}`}>
+<article id={slug} class="definition-card" aria-labelledby={`${slug}-title`}>
   <p class="knowledge-kind">{nature}</p>
-  <h3 id={`definition-${concept}`}><code>{concept}</code></h3>
+  <h3 id={`${slug}-title`}><code>{concept}</code></h3>
   <p>{data.summary}</p>
   <ul class="authority-list">
     {authorities.map(({ source, references }) => (
@@ -41,4 +43,9 @@ const nature = data.nature === "institutional-concept" ? "Conceito institucional
       </li>
     ))}
   </ul>
+  <nav class="concept-links" aria-label={`Atalhos de ${concept}`}>
+    <a href={`#using-${slug}-http`}>API</a>
+    <a href={`#using-${slug}-sdk`}>SDK</a>
+    <a href={`#contract-${slug}`}>Campos</a>
+  </nav>
 </article>

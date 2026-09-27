@@ -24,6 +24,10 @@ describe("domain manifest", () => {
     );
     expect(list?.filters).not.toBeNull();
     expect(list?.pagination).not.toBeNull();
+    expect(list?.sdk).toMatchObject({ resource: "courses", method: "list" });
+    expect(list?.filters?.fields.find(({ path }) => path.join(".") === "credits")?.operators).toContain("gte");
+    expect(list?.sort).toMatchObject({ default: "code:asc" });
+    expect(list?.pagination).toMatchObject({ defaultPageSize: 20, maxPageSize: 1000 });
     expect(manifest.concepts.Course.relations).toEqual({});
   });
 

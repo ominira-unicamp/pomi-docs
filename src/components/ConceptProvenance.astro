@@ -4,6 +4,7 @@ import registry from "../../sources/unicamp.json";
 import type { DataProvenance } from "../../scripts/provenance.ts";
 import type { OfficialSourceRegistry } from "../../scripts/source-registry.ts";
 import ProgressiveDisclosure from "./ProgressiveDisclosure.astro";
+import { conceptSlug } from "../../scripts/technical-surface.ts";
 
 interface Props { concept: "Course" | "Catalog" | "CatalogCourse" }
 const { concept } = Astro.props;
@@ -22,9 +23,10 @@ const sourceById = new Map(
   (registry as OfficialSourceRegistry).sources.map((source) => [source.id, source])
 );
 const fieldCount = Object.keys(data.fields).length;
+const slug = conceptSlug(concept);
 ---
 
-<ProgressiveDisclosure title={`Proveniência de ${concept}`} meta={`${fieldCount} campos documentados`}>
+<ProgressiveDisclosure id={`provenance-${slug}`} title={`Proveniência de ${concept}`} meta={`${fieldCount} campos documentados`}>
   <div class="source-grid source-grid--compact">
     {data.operationalSources.map((origin) => {
       const source = sourceById.get(origin.sourceId);

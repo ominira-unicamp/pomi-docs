@@ -3,16 +3,48 @@ import { contractPath, contractSourcesPath } from "./paths.ts";
 
 type JsonObject = Record<string, unknown>;
 
+export type ManifestSdk = {
+  resource: string;
+  method: string;
+  action: string;
+  pathParameters: Record<string, string>;
+};
+
+export type ManifestFilterField = {
+  path: string[];
+  schema: JsonObject;
+  operators: string[];
+};
+
+export type ManifestFilters = {
+  version: number;
+  fields: ManifestFilterField[];
+  constraints: JsonObject;
+};
+
+export type ManifestPagination = {
+  defaultMode: string;
+  defaultPageSize: number;
+  maxPageSize: number | null;
+  allowAll: boolean;
+};
+
+export type ManifestSort = {
+  version: number;
+  fields: string[];
+  default: string;
+};
+
 export type ManifestOperation = {
   operationId: string;
   method: string;
   path: string;
   tag: string;
   referenceHref: string;
-  sdk: unknown;
-  filters: unknown;
-  pagination: unknown;
-  sort: unknown;
+  sdk: ManifestSdk | null;
+  filters: ManifestFilters | null;
+  pagination: ManifestPagination | null;
+  sort: ManifestSort | null;
 };
 
 export type ManifestConcept = {
@@ -173,10 +205,91 @@ function successfulResponseSchemas(operation: JsonObject, schemas: JsonObject): 
   return [...new Set(responseSchemas)];
 }
 
-function filterMetadata(operation: JsonObject): unknown {
+function strings(value: unknown, label: string): string[] {
+  if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
+    throw new Error(`${label} must be an array of strings`);
+  }
+  return value as string[];
+}
+
+function sdkMetadata(operation: JsonObject): ManifestSdk | null {
+  const metadata = object(operation["x-pomi-sdk"]);
+  if (!metadata) return null;
+  if (
+    typeof metadata.resource !== "string" ||
+    typeof metadata.method !== "string" ||
+    typeof metadata.action !== "string"
+  ) {
+    throw new Error(`Invalid x-pomi-sdk metadata for ${String(operation.operationId)}`);
+  }
+  const pathParameters = object(metadata.pathParameters) ?? {};
+  if (Object.values(pathParameters).some((value) => typeof value !== "string")) {
+    throw new Error(`Invalid x-pomi-sdk pathParameters for ${String(operation.operationId)}`);
+  }
+  return {
+    resource: metadata.resource,
+    method: metadata.method,
+    action: metadata.action,
+    pathParameters: pathParameters as Record<string, string>
+  };
+}
+
+function filterMetadata(operation: JsonObject): ManifestFilters | null {
   const parameters = Array.isArray(operation.parameters) ? operation.parameters : [];
   const filter = parameters.find((parameter) => object(parameter)?.name === "filter");
-  return object(filter)?.["x-pomi-filters"] ?? null;
+  const metadata = object(object(filter)?.["x-pomi-filters"]);
+  if (!metadata) return null;
+  if (typeof metadata.version !== "number" || !Array.isArray(metadata.fields)) {
+    throw new Error(`Invalid x-pomi-filters metadata for ${String(operation.operationId)}`);
+  }
+  const fields = metadata.fields.map((rawField, index) => {
+    const field = object(rawField);
+    if (!field) throw new Error(`Invalid filter field ${index} for ${String(operation.operationId)}`);
+    return {
+      path: strings(field.path, `Filter path ${index}`),
+      schema: object(field.schema) ?? {},
+      operators: strings(field.operators, `Filter operators ${index}`)
+    };
+  });
+  return {
+    version: metadata.version,
+    fields,
+    constraints: object(metadata.constraints) ?? {}
+  };
+}
+
+function paginationMetadata(operation: JsonObject): ManifestPagination | null {
+  const metadata = object(operation["x-pomi-pagination"]);
+  if (!metadata) return null;
+  if (
+    typeof metadata.defaultMode !== "string" ||
+    typeof metadata.defaultPageSize !== "number" ||
+    typeof metadata.allowAll !== "boolean" ||
+    (metadata.maxPageSize !== undefined && typeof metadata.maxPageSize !== "number")
+  ) {
+    throw new Error(`Invalid x-pomi-pagination metadata for ${String(operation.operationId)}`);
+  }
+  return {
+    defaultMode: metadata.defaultMode,
+    defaultPageSize: metadata.defaultPageSize,
+    maxPageSize: typeof metadata.maxPageSize === "number" ? metadata.maxPageSize : null,
+    allowAll: metadata.allowAll
+  };
+}
+
+function sortMetadata(operation: JsonObject): ManifestSort | null {
+  const parameters = Array.isArray(operation.parameters) ? operation.parameters : [];
+  const sort = parameters.find((parameter) => object(parameter)?.name === "sort");
+  const metadata = object(object(sort)?.["x-pomi-sort"]);
+  if (!metadata) return null;
+  if (typeof metadata.version !== "number" || typeof metadata.default !== "string") {
+    throw new Error(`Invalid x-pomi-sort metadata for ${String(operation.operationId)}`);
+  }
+  return {
+    version: metadata.version,
+    fields: strings(metadata.fields, `Sort fields for ${String(operation.operationId)}`),
+    default: metadata.default
+  };
 }
 
 export async function generateDomainManifest(): Promise<DomainManifest> {
@@ -237,14 +350,10 @@ export async function generateDomainManifest(): Promise<DomainManifest> {
         path,
         tag: tags[0],
         referenceHref: "https://data.pomi.ominira.dev/docs",
-        sdk: operation["x-pomi-sdk"] ?? null,
+        sdk: sdkMetadata(operation),
         filters: filterMetadata(operation),
-        pagination: operation["x-pomi-pagination"] ?? null,
-        sort: (() => {
-          const parameters = Array.isArray(operation.parameters) ? operation.parameters : [];
-          const sort = parameters.find((parameter) => object(parameter)?.name === "sort");
-          return object(sort)?.["x-pomi-sort"] ?? null;
-        })()
+        pagination: paginationMetadata(operation),
+        sort: sortMetadata(operation)
       };
       for (const schemaName of successfulResponseSchemas(operation, schemas)) {
         const publicName = schemaConcepts.get(schemaName);
