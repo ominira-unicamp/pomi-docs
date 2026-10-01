@@ -43,11 +43,15 @@ export default defineConfig({
           label: "Entendendo os dados",
           items: [
             { label: "Visão geral", slug: "domain/overview" },
-            { label: "Fontes e proveniência", slug: "domain/provenance" },
+            { label: "Estrutura acadêmica", slug: "domain/academic-structure" },
             { label: "Disciplinas e catálogos", slug: "domain/courses-and-catalogs" },
             { label: "Pré-requisitos", slug: "domain/prerequisites" },
             { label: "Currículos", slug: "domain/curricula" },
-            { label: "Turmas e períodos", slug: "domain/classes-and-periods" }
+            { label: "Turmas e horários", slug: "domain/classes-and-periods" },
+            { label: "Docentes", slug: "domain/professors" },
+            { label: "Calendário acadêmico", slug: "domain/calendar" },
+            { label: "Restaurante universitário", slug: "domain/daily-menus" },
+            { label: "Intercâmbio", slug: "domain/exchange" }
           ]
         },
         {
@@ -57,7 +61,8 @@ export default defineConfig({
             { label: "Convenções", slug: "data-api/conventions" },
             { label: "Filtros e ordenação", slug: "data-api/filtering" },
             { label: "Paginação", slug: "data-api/pagination" },
-            { label: "Erros", slug: "data-api/errors" }
+            { label: "Erros", slug: "data-api/errors" },
+            { label: "Proveniência e atualização", slug: "domain/provenance" }
           ]
         },
         {

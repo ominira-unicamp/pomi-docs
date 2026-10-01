@@ -91,6 +91,23 @@ export function validateKnowledgeBase(
     validateSemanticSources(documented.values, sources, enumName);
   }
 
+  for (const [name, documented] of Object.entries(semantics.fieldEnums)) {
+    const concept = manifest.concepts[documented.concept];
+    if (!concept) throw new Error(`${name}: unknown concept ${documented.concept}`);
+    const field = concept.fields.find(({ name: fieldName }) => fieldName === documented.field);
+    if (!field?.enumValues) {
+      throw new Error(`${name}: OpenAPI enum not found at ${documented.concept}.${documented.field}`);
+    }
+    sameMembers(Object.keys(documented.values), field.enumValues, `${name} values`);
+    if (field.nullable && !documented.nullMeaning) {
+      throw new Error(`${name}: nullable enum requires nullMeaning`);
+    }
+    if (!field.nullable && documented.nullMeaning) {
+      throw new Error(`${name}: non-nullable enum cannot define nullMeaning`);
+    }
+    validateSemanticSources(documented.values, sources, name);
+  }
+
   for (const [unionName, documented] of Object.entries(semantics.unions)) {
     const union = manifest.concepts[unionName]?.union;
     if (!union) throw new Error(`${unionName}: OpenAPI discriminated union not found`);

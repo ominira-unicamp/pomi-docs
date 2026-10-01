@@ -10,8 +10,17 @@ export type SemanticValue = {
 export type SemanticSource = SemanticValue["sources"][number];
 
 export type DomainSemantics = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   enums: Record<string, { nullMeaning?: string; values: Record<string, SemanticValue> }>;
+  fieldEnums: Record<
+    string,
+    {
+      concept: string;
+      field: string;
+      nullMeaning?: string;
+      values: Record<string, SemanticValue>;
+    }
+  >;
   unions: Record<
     string,
     { discriminator: string; variants: Record<string, SemanticValue> }

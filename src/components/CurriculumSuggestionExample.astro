@@ -1,0 +1,35 @@
+---
+const firstSemester = [
+  { code: "HH183", credits: 8 },
+  { code: "HH185", credits: 6 },
+  { code: "HH186", credits: 8 },
+  { code: "HH188", credits: 6 }
+];
+---
+
+<section class="suggestion-example" aria-labelledby="suggestion-example-title">
+  <header>
+    <p class="source-kind">Exemplo institucional</p>
+    <h3 id="suggestion-example-title">Primeiro semestre sugerido</h3>
+    <p>Bacharelado e Licenciatura em História começam com a mesma distribuição.</p>
+  </header>
+  <ol class="suggestion-semesters">
+    <li>
+      <div class="suggestion-semester-heading">
+        <strong>1º semestre</strong>
+        <span>28 créditos em disciplinas</span>
+      </div>
+      <ul>
+        {firstSemester.map((course) => <li><code>{course.code}</code><span>{course.credits} créditos</span></li>)}
+      </ul>
+      <p><code>electiveCredits: 0</code></p>
+    </li>
+    <li class="suggestion-semester-structure">
+      <div class="suggestion-semester-heading">
+        <strong>Demais semestres</strong>
+        <span>mesma estrutura contratual</span>
+      </div>
+      <p>Cada período informa disciplinas sugeridas e, quando aplicável, a quantidade de créditos eletivos reservada para aquele momento do percurso.</p>
+    </li>
+  </ol>
+</section>

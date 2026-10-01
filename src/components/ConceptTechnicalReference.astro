@@ -13,7 +13,14 @@ import {
 import ProgressiveDisclosure from "./ProgressiveDisclosure.astro";
 
 interface Props {
-  concept: "Course" | "Catalog" | "CatalogCourse";
+  concept:
+    | "Course"
+    | "Catalog"
+    | "CatalogCourse"
+    | "Program"
+    | "CatalogProgram"
+    | "Specialization"
+    | "CurriculumSuggestion";
   fieldGroups?: TechnicalFieldGroup[];
   semanticLinks?: Record<string, { label: string; href: string }>;
 }

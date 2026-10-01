@@ -1,0 +1,83 @@
+---
+title: Estrutura acadêmica
+description: Como unidades e departamentos organizam os demais dados do POMI.
+tableOfContents: false
+concepts: [Unit, Department]
+operations: [listUnits, getUnits, listDepartments, getDepartments]
+officialSources: [UNICAMP_UNITS, UNICAMP_DAC_PROGRAMS, UNICAMP_DATA_PORTAL_PROFESSORS]
+---
+
+import ConceptTechnicalSurface from "../../../components/ConceptTechnicalSurface.astro";
+import ConceptSchema from "../../../components/ConceptSchema.astro";
+
+`Unit` e `Department` dão contexto institucional a cursos, disciplinas e
+docentes. Eles não reproduzem toda a estrutura administrativa da Unicamp.
+
+<div class="takeaway"><strong>Em uma frase:</strong> a unidade organiza uma área institucional; o departamento representa uma subdivisão associada a ela.</div>
+
+<nav class="contextual-nav" aria-label="Seções desta página">
+  <a href="#structure-model">Modelo</a><a href="#structure-usage">Consultar</a><a href="#structure-limits">Limites</a><a href="#structure-reference">Referência</a><a href="#structure-sources">Fontes</a>
+</nav>
+
+<span id="structure-model" class="section-anchor" aria-hidden="true"></span>
+
+## O modelo
+
+```text
+Unit
+├── Course
+├── Program
+└── Department
+    └── ProfessorDataPortalProfile
+```
+
+<div class="table-wrap" tabindex="0">
+
+| Linguagem institucional | Representação POMI |
+|---|---|
+| unidade de ensino e pesquisa | `Unit` |
+| departamento associado à unidade | `Department` |
+| sigla usada pelas fontes | `Unit.code` |
+| identificador interno | `Unit.id` / `Department.id` |
+
+</div>
+
+O código da unidade é normalizado a partir das fontes operacionais. O `id` é
+criado pelo POMI e não deve ser tratado como código institucional.
+
+<span id="structure-usage" class="section-anchor" aria-hidden="true"></span>
+
+## Como consultar
+
+<ConceptTechnicalSurface concept="Unit" title="Localizar uma unidade" description="Consulte unidades por código ou nome." filterExample={{ label: "Unidade IC", expressions: [{ field: "code", operator: "eq", value: "IC" }] }} />
+
+<ConceptTechnicalSurface concept="Department" title="Localizar departamentos" description="Consulte departamentos associados a uma unidade." filterExample={{ label: "Departamentos de uma unidade", expressions: [{ field: "unitId", operator: "eq", value: 1 }] }} />
+
+<span id="structure-limits" class="section-anchor" aria-hidden="true"></span>
+
+## Limites de interpretação
+
+- `Unit` não representa automaticamente toda unidade administrativa ou de serviço.
+- A mesma unidade pode ser observada pelo catálogo, Caderno de Horários e Portal Docentes.
+- `Department.unitId` é uma relação resolvida pelo POMI; não é uma chave global publicada por todas as fontes.
+- A frequência de sincronização dessas fontes não faz parte do contrato público.
+
+<span id="structure-reference" class="section-anchor" aria-hidden="true"></span>
+
+## Referência técnica
+
+<ConceptSchema names={["Unit", "Department"]} />
+
+<span id="structure-sources" class="section-anchor" aria-hidden="true"></span>
+
+## Fontes e proveniência
+
+Unidades são observadas em diferentes fluxos e consolidadas por código; os
+departamentos são normalizados a partir dos perfis e relacionados à unidade
+resolvida. A bibliografia abaixo identifica as publicações institucionais.
+
+## Continue lendo
+
+- [Disciplinas e catálogos](/domain/courses-and-catalogs/)
+- [Currículos e propostas de cumprimento](/domain/curricula/)
+- [Docentes](/domain/professors/)

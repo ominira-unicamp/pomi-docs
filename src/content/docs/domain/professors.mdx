@@ -1,0 +1,93 @@
+---
+title: Docentes e perfis institucionais
+description: Identidade acadêmica, perfil enriquecido e vínculos institucionais.
+tableOfContents: false
+concepts: [Professor, ProfessorDataPortalProfile, Department, ProfessorPosition, AcademicPositionAffiliation, CareerReference, Keyword, Coauthor]
+operations: [listProfessors, getProfessors, getProfessorDataPortalProfiles, listProfessorPositions, getProfessorPositions]
+officialSources: [UNICAMP_DATA_PORTAL_PROFESSORS, UNICAMP_DAC_TIMETABLE_MC202_2026_2]
+---
+
+import ConceptTechnicalSurface from "../../../components/ConceptTechnicalSurface.astro";
+import ConceptSchema from "../../../components/ConceptSchema.astro";
+import UnionSemantics from "../../../components/UnionSemantics.astro";
+
+`Professor` é a identidade mínima usada por turmas. `ProfessorDataPortalProfile`
+é um perfil complementar coletado do Portal Docentes e Pesquisadores.
+
+<div class="takeaway"><strong>A distinção central:</strong> o vínculo entre a identidade de uma turma e o perfil do portal é resolvido pelo POMI; as fontes não compartilham uma chave institucional única.</div>
+
+<nav class="contextual-nav" aria-label="Seções desta página">
+  <a href="#professor-model">Modelo</a><a href="#professor-usage">Consultar</a><a href="#professor-affiliation">Vínculos</a><a href="#professor-matching">Matching</a><a href="#professor-reference">Referência</a><a href="#professor-sources">Fontes</a>
+</nav>
+
+<span id="professor-model" class="section-anchor" aria-hidden="true"></span>
+
+## Duas representações complementares
+
+```text
+Class ──> Professor
+              │ matching POMI
+              ▼
+ProfessorDataPortalProfile
+├── Unit / Department
+├── ProfessorPosition
+├── identificadores e formação
+└── palavras-chave e coautores
+```
+
+O `id` de `Professor` é interno ao POMI: não é matrícula, identificador Lattes
+nem identificador do Portal Docentes.
+
+<span id="professor-usage" class="section-anchor" aria-hidden="true"></span>
+
+## Como consultar
+
+<ConceptTechnicalSurface concept="Professor" title="Localizar docentes de uma turma" description="Consulte as identidades acadêmicas relacionadas às ofertas." filterExample={{ label: "Docentes de uma turma", expressions: [{ field: "classId", operator: "eq", value: 1 }] }} />
+
+<ConceptTechnicalSurface concept="ProfessorPosition" title="Consultar posições normalizadas" description="Explore as posições institucionais interpretadas pelo POMI." filterExample={{ label: "Posições docentes", expressions: [{ field: "role", operator: "eq", value: "PROFESSOR" }] }} />
+
+<span id="professor-affiliation" class="section-anchor" aria-hidden="true"></span>
+
+## Vínculos institucionais
+
+`ProfessorPosition.affiliation` é uma union discriminada. Os identificadores
+normalizados permitem tratar formatos diferentes sem afirmar que cada variante
+constitui uma carreira equivalente.
+
+<UnionSemantics name="AcademicPositionAffiliation" showHeading={false} stacked={true} />
+
+`CareerReference` preserva referências como código, nível e categoria. Campos
+auxiliares como `progressionOrder` são organização do POMI, não redação da fonte.
+
+<span id="professor-matching" class="section-anchor" aria-hidden="true"></span>
+
+## Como os perfis são relacionados
+
+O Caderno de Horários publica nomes de docentes; o Portal publica perfis com
+unidade e departamento. O POMI normaliza nome e unidade e rejeita relações
+ambíguas. Um perfil ausente não significa que a pessoa não seja docente.
+
+## Limites de interpretação
+
+- E-mail e detalhes de perfil podem ser nulos.
+- Palavras-chave e coautores descrevem o perfil coletado, não toda produção acadêmica.
+- As correspondências normativas detalhadas de `VISITING_SPECIALIST` e `POSTDOCTORAL_PROGRAM` permanecem não especificadas.
+
+<span id="professor-reference" class="section-anchor" aria-hidden="true"></span>
+
+## Referência técnica
+
+<ConceptSchema names={["Professor", "ProfessorDataPortalProfile", "Department", "ProfessorPosition", "AcademicPositionAffiliation", "CareerReference", "Keyword", "Coauthor"]} />
+
+<span id="professor-sources" class="section-anchor" aria-hidden="true"></span>
+
+## Fontes e proveniência
+
+O Caderno fornece os nomes associados às turmas; o Portal fornece os perfis
+enriquecidos. O relacionamento entre ambos é uma transformação do POMI e não
+uma chave compartilhada pelas fontes listadas abaixo.
+
+## Continue lendo
+
+- [Estrutura acadêmica](/domain/academic-structure/)
+- [Turmas e horários](/domain/classes-and-periods/)

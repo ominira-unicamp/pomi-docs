@@ -5,7 +5,16 @@ import type { DataProvenance } from "../../scripts/provenance.ts";
 import { resolveSource, type OfficialSourceRegistry } from "../../scripts/source-registry.ts";
 import { conceptSlug } from "../../scripts/technical-surface.ts";
 
-interface Props { concept: "Course" | "Catalog" | "CatalogCourse" }
+interface Props {
+  concept:
+    | "Course"
+    | "Catalog"
+    | "CatalogCourse"
+    | "Program"
+    | "CatalogProgram"
+    | "Specialization"
+    | "CurriculumSuggestion";
+}
 const { concept } = Astro.props;
 const data = (provenance as DataProvenance).concepts[concept];
 const sourceRegistry = registry as OfficialSourceRegistry;

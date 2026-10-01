@@ -1,0 +1,90 @@
+---
+title: Restaurante universitário
+description: Como o POMI representa cardápios, refeições e ausência de cadastro.
+tableOfContents: false
+concepts: [DailyMenu, Meal, MealPeriod, MealDiet, MealStatus]
+operations: [listDailyMenus, getDailyMenus]
+officialSources: [UNICAMP_PREFEITURA_MENU, UNICAMP_PREFEITURA_MENU_APP]
+---
+
+import ConceptTechnicalSurface from "../../../components/ConceptTechnicalSurface.astro";
+import ConceptSchema from "../../../components/ConceptSchema.astro";
+import EnumSemantics from "../../../components/EnumSemantics.astro";
+
+`DailyMenu` agrupa as refeições publicadas para uma data. Cada `Meal` identifica
+período, dieta, estado, itens e observações conhecidas.
+
+<div class="takeaway"><strong>Em uma frase:</strong> ausência de uma refeição cadastrada é um estado preservado pelo POMI, não necessariamente uma falha de coleta.</div>
+
+<nav class="contextual-nav" aria-label="Seções desta página">
+  <a href="#menu-model">Modelo</a><a href="#menu-usage">Consultar</a><a href="#menu-meanings">Refeições</a><a href="#menu-reference">Referência</a><a href="#menu-sources">Fontes</a>
+</nav>
+
+<span id="menu-model" class="section-anchor" aria-hidden="true"></span>
+
+## O modelo
+
+```text
+date
+└── DailyMenu
+    └── Meal[]
+        ├── period
+        ├── diet
+        ├── status
+        ├── mainDish / items
+        └── observations / serviceNotes
+```
+
+`createdAt` e `updatedAt` descrevem o registro no POMI. Eles não são datas de
+publicação apresentadas como conteúdo do cardápio institucional.
+
+<span id="menu-usage" class="section-anchor" aria-hidden="true"></span>
+
+## Como consultar
+
+<ConceptTechnicalSurface concept="DailyMenu" title="Consultar o cardápio de uma data" description="Recupere as refeições registradas para o dia consultado." filterExample={{ label: "Cardápio de uma data", expressions: [{ field: "date", operator: "eq", value: "2026-09-28" }] }} />
+
+<span id="menu-meanings" class="section-anchor" aria-hidden="true"></span>
+
+## Interpretando as refeições
+
+### Período
+
+<EnumSemantics name="MealPeriod" showHeading={false} />
+
+### Dieta
+
+<EnumSemantics name="MealDiet" showHeading={false} />
+
+### Estado
+
+<EnumSemantics name="MealStatus" showHeading={false} />
+
+`NOT_REGISTERED` informa que a fonte não apresentou uma refeição cadastrada
+para aquela combinação. Não converta automaticamente esse estado em menu vazio,
+restaurante fechado ou indisponibilidade do pipeline.
+
+## Limites de interpretação
+
+- Cardápios operacionais podem mudar depois da coleta.
+- Observações e avisos de serviço devem ser exibidos quando presentes.
+- A janela conhecida do coletor não determina a frequência de sua execução.
+
+<span id="menu-reference" class="section-anchor" aria-hidden="true"></span>
+
+## Referência técnica
+
+<ConceptSchema names={["DailyMenu", "Meal"]} />
+
+<span id="menu-sources" class="section-anchor" aria-hidden="true"></span>
+
+## Fontes e proveniência
+
+A página da Prefeitura conduz à aplicação consultada por data. O POMI
+normaliza cada combinação de período e dieta e preserva a falta de cadastro
+como estado explícito. As duas superfícies oficiais estão listadas abaixo.
+
+## Continue lendo
+
+- [Fontes, autoridade e proveniência](/domain/provenance/)
+- [Primeira requisição](/data-api/first-request/)

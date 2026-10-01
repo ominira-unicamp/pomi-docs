@@ -1,6 +1,43 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "enums": {
+    "YearPeriod": {
+      "values": {
+        "SUMMER": { "label": "Férias de verão", "description": "Período acadêmico adicional de verão, normalmente publicado como 5A.", "sources": [{ "sourceId": "UNICAMP_DAC_RGCG" }] },
+        "FIRST_SEMESTER": { "label": "Primeiro semestre", "description": "Primeiro período letivo regular do ano, publicado como 1S.", "sources": [{ "sourceId": "UNICAMP_DAC_RGCG" }] },
+        "WINTER": { "label": "Férias de inverno", "description": "Período acadêmico adicional de inverno, publicado como 6A quando aplicável.", "sources": [{ "sourceId": "UNICAMP_DAC_RGCG" }] },
+        "SECOND_SEMESTER": { "label": "Segundo semestre", "description": "Segundo período letivo regular do ano, publicado como 2S.", "sources": [{ "sourceId": "UNICAMP_DAC_RGCG" }] }
+      }
+    },
+    "DayOfWeek": {
+      "values": {
+        "MONDAY": { "label": "Segunda-feira", "description": "O encontro ocorre na segunda-feira.", "sources": [{ "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2" }] },
+        "TUESDAY": { "label": "Terça-feira", "description": "O encontro ocorre na terça-feira.", "sources": [{ "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2" }] },
+        "WEDNESDAY": { "label": "Quarta-feira", "description": "O encontro ocorre na quarta-feira.", "sources": [{ "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2" }] },
+        "THURSDAY": { "label": "Quinta-feira", "description": "O encontro ocorre na quinta-feira.", "sources": [{ "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2" }] },
+        "FRIDAY": { "label": "Sexta-feira", "description": "O encontro ocorre na sexta-feira.", "sources": [{ "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2" }] },
+        "SATURDAY": { "label": "Sábado", "description": "O encontro ocorre no sábado.", "sources": [{ "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2" }] },
+        "SUNDAY": { "label": "Domingo", "description": "O encontro ocorre no domingo.", "sources": [{ "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2" }] }
+      }
+    },
+    "MealPeriod": {
+      "values": {
+        "LUNCH": { "label": "Almoço", "description": "Refeição publicada para o período do almoço.", "sources": [{ "sourceId": "UNICAMP_PREFEITURA_MENU_APP" }] },
+        "DINNER": { "label": "Jantar", "description": "Refeição publicada para o período do jantar.", "sources": [{ "sourceId": "UNICAMP_PREFEITURA_MENU_APP" }] }
+      }
+    },
+    "MealDiet": {
+      "values": {
+        "TRADITIONAL": { "label": "Tradicional", "description": "Linha tradicional do cardápio oficial.", "sources": [{ "sourceId": "UNICAMP_PREFEITURA_MENU_APP" }] },
+        "VEGAN": { "label": "Vegana", "description": "Linha vegana do cardápio oficial.", "sources": [{ "sourceId": "UNICAMP_PREFEITURA_MENU_APP" }] }
+      }
+    },
+    "MealStatus": {
+      "values": {
+        "AVAILABLE": { "label": "Disponível", "description": "A fonte publicou conteúdo para essa combinação de período e dieta.", "sources": [{ "sourceId": "UNICAMP_PREFEITURA_MENU_APP" }] },
+        "NOT_REGISTERED": { "label": "Não cadastrado", "description": "A fonte não apresentou uma refeição cadastrada; isso não equivale automaticamente a falha de coleta.", "sources": [{ "sourceId": "UNICAMP_PREFEITURA_MENU_APP" }] }
+      }
+    },
     "CourseOfferingPeriod": {
       "nullMeaning": "O catálogo não forneceu um período de oferecimento reconhecido.",
       "values": {
@@ -25,7 +62,54 @@
       }
     }
   },
+  "fieldEnums": {
+    "CatalogProgram.shift": {
+      "concept": "CatalogProgram",
+      "field": "shift",
+      "nullMeaning": "O catálogo não forneceu um turno reconhecido pelo POMI.",
+      "values": {
+        "DAYTIME": { "label": "Integral", "description": "Normalização POMI para o turno Integral reconhecido nas fontes catalogais atuais; História 19 é publicado dessa forma.", "sources": [{ "sourceId": "UNICAMP_DAC_PROGRAM_19_2026" }] },
+        "NIGHT": { "label": "Noturno", "description": "O curso é publicado pela DAC no período noturno.", "sources": [{ "sourceId": "UNICAMP_DAC_PROGRAMS" }] }
+      }
+    },
+    "CatalogProgram.creditLimitType": {
+      "concept": "CatalogProgram",
+      "field": "creditLimitType",
+      "nullMeaning": "O catálogo não forneceu uma regra de limite que o POMI tenha reconhecido.",
+      "values": {
+        "NONE": { "label": "Sem regra estruturada", "description": "Nenhuma limitação estruturada foi registrada para a edição do programa.", "sources": [{ "sourceId": "UNICAMP_DAC_CATALOG" }] },
+        "FIXED": { "label": "Limite fixo", "description": "O máximo de créditos por período é um número fixo; em História 19/2026, o limite é 36.", "sources": [{ "sourceId": "UNICAMP_DAC_PROGRAM_19_2026" }] },
+        "CR_FORMULA": { "label": "Fórmula por rendimento", "description": "O limite é calculado por uma fórmula que usa o coeficiente de rendimento e os parâmetros publicados no catálogo.", "sources": [{ "sourceId": "UNICAMP_DAC_CATALOG" }] }
+      }
+    }
+  },
   "unions": {
+    "AcademicPositionAffiliation": {
+      "discriminator": "type",
+      "variants": {
+        "CAREER": { "label": "Carreira docente", "description": "Vínculo associado a uma referência de carreira institucional.", "sources": [{ "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS" }] },
+        "COLLABORATOR": { "label": "Colaborador", "description": "Vínculo publicado como professor ou pesquisador colaborador.", "sources": [{ "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS" }] },
+        "SENIOR": { "label": "Sênior", "description": "Vínculo publicado como professor ou pesquisador sênior.", "sources": [{ "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS" }] },
+        "VISITING_INVITED": { "label": "Visitante convidado", "description": "Vínculo normalizado pelo POMI para visitante convidado.", "sources": [{ "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS" }] },
+        "VISITING_SPECIALIST": { "label": "Especialista visitante", "description": "Vínculo normalizado pelo POMI; a correspondência normativa detalhada permanece não especificada.", "sources": [{ "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS" }] },
+        "POSTDOCTORAL_PROGRAM": { "label": "Programa de pós-doutorado", "description": "Vínculo normalizado para participação em programa de pós-doutorado; os detalhes normativos não são inferidos pelo contrato.", "sources": [{ "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS" }] }
+      }
+    },
+    "CatalogProgramVariant": {
+      "discriminator": "type",
+      "variants": {
+        "PROGRAM": { "label": "Variante geral do programa", "description": "Representa uma configuração curricular vinculada diretamente ao programa, sem uma habilitação ou ênfase específica.", "sources": [{ "sourceId": "UNICAMP_DAC_RGCG" }] },
+        "SPECIALIZATION": { "label": "Variante de habilitação ou ênfase", "description": "Representa a configuração curricular de uma Specialization; em História 19, AA e AB são variantes desse tipo.", "sources": [{ "sourceId": "UNICAMP_DAC_PROGRAM_19_2026" }] }
+      }
+    },
+    "CourseRequirement": {
+      "discriminator": "type",
+      "variants": {
+        "any": { "label": "Escolha aberta", "description": "Aceita qualquer disciplina para completar a quantidade de créditos definida pelo bloco eletivo.", "sources": [{ "sourceId": "UNICAMP_DAC_CURRICULUM_19_2026" }] },
+        "prefix": { "label": "Conjunto identificado por prefixo", "description": "Aceita disciplinas cujo código pertence ao prefixo publicado; História usa, por exemplo, o prefixo EX.", "sources": [{ "sourceId": "UNICAMP_DAC_CURRICULUM_19_2026" }] },
+        "specific": { "label": "Disciplina específica", "description": "Exige ou oferece uma disciplina identificada, como HH183 na base comum de História.", "sources": [{ "sourceId": "UNICAMP_DAC_CURRICULUM_19_2026" }] }
+      }
+    },
     "CatalogCoursePrerequisiteItem": {
       "discriminator": "type",
       "variants": {

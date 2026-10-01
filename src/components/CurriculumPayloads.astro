@@ -1,0 +1,56 @@
+---
+import { Code } from "astro:components";
+import ProgressiveDisclosure from "./ProgressiveDisclosure.astro";
+
+const relationship = {
+  program: { code: 19, name: "História" },
+  catalogProgram: { catalogYear: 2026, programCode: 19, shift: "DAYTIME" },
+  variants: [
+    { type: "SPECIALIZATION", code: "AA", name: "Bacharelado em História" },
+    { type: "SPECIALIZATION", code: "AB", name: "Licenciatura em História" }
+  ]
+};
+
+const curriculum = {
+  base: {
+    mandatory: [{ type: "specific", specific: { courseCode: "HH183" } }],
+    electives: [{ credits: 10, courses: [{ type: "any" }] }]
+  },
+  variant: {
+    code: "AA",
+    blocks: {
+      electives: [{ credits: 12, courses: [{ type: "prefix", prefix: { value: "EX" } }] }]
+    }
+  }
+};
+
+const suggestion = {
+  catalogYear: 2026,
+  programCode: 19,
+  specialization: { code: "AA", name: "Bacharelado em História" },
+  semesters: [
+    {
+      semester: 1,
+      electiveCredits: 0,
+      courses: [
+        { code: "HH183", credits: 8 },
+        { code: "HH185", credits: 6 },
+        { code: "HH186", credits: 8 },
+        { code: "HH188", credits: 6 }
+      ]
+    }
+  ]
+};
+---
+
+<div class="course-catalog-payloads curriculum-payloads">
+  <ProgressiveDisclosure title="Ver relação em JSON" meta="exemplo contextualizado">
+    <Code code={JSON.stringify(relationship, null, 2)} lang="json" theme="horizon" />
+  </ProgressiveDisclosure>
+  <ProgressiveDisclosure title="Ver exemplos de currículo e proposta" meta="payloads reduzidos">
+    <h3>Currículo pleno</h3>
+    <Code code={JSON.stringify(curriculum, null, 2)} lang="json" theme="horizon" />
+    <h3>Primeiro semestre sugerido</h3>
+    <Code code={JSON.stringify(suggestion, null, 2)} lang="json" theme="horizon" />
+  </ProgressiveDisclosure>
+</div>

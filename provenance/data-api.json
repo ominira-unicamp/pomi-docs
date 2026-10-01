@@ -1,7 +1,174 @@
 {
   "schemaVersion": 2,
-  "requiredConcepts": ["Course", "Catalog", "CatalogCourse"],
+  "requiredConcepts": ["Unit", "Department", "Course", "Catalog", "CatalogCourse", "Program", "CatalogProgram", "Specialization", "CurriculumSuggestion", "StudyPeriod", "Class", "ClassSchedule", "Room", "Professor", "ProfessorDataPortalProfile", "CalendarEvent", "DailyMenu", "ExchangeNotice"],
   "concepts": {
+    "Unit": {
+      "nature": "pomi-abstraction",
+      "summary": "Representação normalizada de uma unidade institucional relacionada a cursos, disciplinas, departamentos e docentes.",
+      "semanticAuthorities": [{ "sourceId": "UNICAMP_UNITS" }],
+      "operationalSources": [{ "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "collector": "caderno-horarios", "injection": "academic-data" }, { "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "collector": "docentes", "injection": "professor-data-portal" }],
+      "limitations": ["O modelo não representa toda a estrutura administrativa da Unicamp e o ID é interno ao POMI."],
+      "fields": {
+        "id": { "lineage": [{ "origin": "pomi-generated" }] },
+        "code": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "unit.code" }] },
+        "name": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "sourceField": "unit.name" }] }
+      }
+    },
+    "Department": {
+      "nature": "pomi-abstraction",
+      "summary": "Subdivisão institucional publicada no perfil de docentes e relacionada pelo POMI a uma unidade.",
+      "semanticAuthorities": [{ "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS" }],
+      "operationalSources": [{ "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "collector": "docentes", "injection": "professor-data-portal" }],
+      "limitations": ["A relação com Unit é resolvida pelo POMI e não constitui uma chave global compartilhada por todas as fontes."],
+      "fields": {
+        "id": { "lineage": [{ "origin": "pomi-generated" }] },
+        "name": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "sourceField": "department.name" }] },
+        "unitId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "sourceField": "unit" }] }
+      }
+    },
+    "StudyPeriod": {
+      "nature": "pomi-abstraction",
+      "summary": "Período acadêmico normalizado a partir do ano e do código de período publicado pela DAC.",
+      "semanticAuthorities": [{ "sourceId": "UNICAMP_DAC_RGCG" }, { "sourceId": "UNICAMP_DAC_CALENDAR_2026" }],
+      "operationalSources": [{ "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "collector": "caderno-horarios", "injection": "academic-data" }],
+      "limitations": ["O contrato expõe a data inicial conhecida, mas não uma data final explícita."],
+      "fields": {
+        "id": { "lineage": [{ "origin": "pomi-generated" }] },
+        "year": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "year" }] },
+        "yearPeriod": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "semester" }] },
+        "startDate": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_CALENDAR_2026", "sourceField": "events" }] }
+      }
+    },
+    "Class": {
+      "nature": "pomi-abstraction",
+      "summary": "Oferta concreta de uma disciplina em determinado período acadêmico.",
+      "semanticAuthorities": [{ "sourceId": "UNICAMP_DAC_RGCG" }, { "sourceId": "UNICAMP_DAC_ENROLLMENT" }],
+      "operationalSources": [{ "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "collector": "caderno-horarios", "injection": "academic-data" }],
+      "limitations": ["Vagas, reservas e matrícula são conceitos diferentes; uma turma também pode existir sem horário cadastrado."],
+      "fields": {
+        "id": { "lineage": [{ "origin": "pomi-generated" }] },
+        "code": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "class.code" }] },
+        "reservationPrograms": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "reservations" }] },
+        "courseId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "course.code" }] },
+        "studyPeriodId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "yearPeriod" }] },
+        "professorIds": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "professors" }] },
+        "studyPeriodYear": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "year" }] },
+        "studyPeriodYearPeriod": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "semester" }] },
+        "courseCode": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "course.code" }] },
+        "unitId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "unit.code" }] },
+        "unitCode": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "unit.code" }] },
+        "professors": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "professors" }] }
+      }
+    },
+    "ClassSchedule": {
+      "nature": "pomi-abstraction",
+      "summary": "Encontro conhecido de uma turma, com dia, início, fim e sala relacionados.",
+      "semanticAuthorities": [{ "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2" }],
+      "operationalSources": [{ "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "collector": "caderno-horarios", "injection": "academic-data" }],
+      "limitations": ["Ausência de encontros não implica ausência da turma."],
+      "fields": {
+        "id": { "lineage": [{ "origin": "pomi-generated" }] },
+        "dayOfWeek": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "schedule.day" }] },
+        "start": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "schedule.start" }] },
+        "end": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "schedule.end" }] },
+        "roomId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "schedule.room" }] },
+        "classId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "class.code" }] },
+        "roomCode": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "schedule.room" }] },
+        "classCode": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "class.code" }] },
+        "unitId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "unit.code" }] },
+        "unitCode": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "unit.code" }] },
+        "courseId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "course.code" }] },
+        "courseCode": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "course.code" }] },
+        "studyPeriodId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "yearPeriod" }] },
+        "studyPeriodYear": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "year" }] },
+        "studyPeriodYearPeriod": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "semester" }] }
+      }
+    },
+    "Room": {
+      "nature": "pomi-abstraction",
+      "summary": "Identidade normalizada de uma sala mencionada no Caderno de Horários.",
+      "semanticAuthorities": [{ "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2" }],
+      "operationalSources": [{ "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "collector": "caderno-horarios", "injection": "academic-data" }],
+      "limitations": ["O código não fornece sozinho localização física, capacidade ou acessibilidade da sala."],
+      "fields": { "id": { "lineage": [{ "origin": "pomi-generated" }] }, "code": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "schedule.room" }] } }
+    },
+    "Professor": {
+      "nature": "pomi-abstraction",
+      "summary": "Identidade mínima de docente usada nas relações com turmas.",
+      "semanticAuthorities": [{ "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS" }],
+      "operationalSources": [{ "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "collector": "caderno-horarios", "injection": "academic-data" }],
+      "limitations": ["O ID não é matrícula institucional e um nome pode exigir resolução posterior contra o Portal Docentes."],
+      "fields": { "id": { "lineage": [{ "origin": "pomi-generated" }] }, "name": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_TIMETABLE_MC202_2026_2", "sourceField": "professor.name" }] } }
+    },
+    "ProfessorDataPortalProfile": {
+      "nature": "pomi-abstraction",
+      "summary": "Perfil institucional enriquecido obtido do Portal Docentes e relacionado a uma identidade Professor.",
+      "semanticAuthorities": [{ "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS" }],
+      "operationalSources": [{ "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "collector": "docentes", "injection": "professor-data-portal" }],
+      "limitations": ["A relação com Professor usa nome normalizado e unidade e rejeita ambiguidades; campos opcionais podem não ser publicados."],
+      "fields": {
+        "id": { "lineage": [{ "origin": "pomi-generated" }] },
+        "professorId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "sourceField": "name" }] },
+        "portalId": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "sourceField": "portalId" }] },
+        "name": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "sourceField": "name" }] },
+        "email": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "sourceField": "email" }] },
+        "lattesAbstract": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "sourceField": "lattesAbstract" }] },
+        "unit": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "sourceField": "unit" }] },
+        "department": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "sourceField": "department" }] },
+        "position": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "sourceField": "position" }] },
+        "identifiers": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "sourceField": "identifiers" }] },
+        "citationNames": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "sourceField": "citationNames" }] },
+        "trainings": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "sourceField": "trainings" }] },
+        "keywords": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "sourceField": "keywords" }] },
+        "coauthors": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DATA_PORTAL_PROFESSORS", "sourceField": "coauthors" }] }
+      }
+    },
+    "CalendarEvent": {
+      "nature": "pomi-abstraction",
+      "summary": "Evento ou intervalo publicado no calendário acadêmico e normalizado pelo POMI.",
+      "semanticAuthorities": [{ "sourceId": "UNICAMP_DAC_CALENDAR_2026" }],
+      "operationalSources": [{ "sourceId": "UNICAMP_DAC_CALENDAR_2026", "collector": "calendario", "injection": "calendar" }],
+      "limitations": ["O calendário é anual e pode receber alterações; CalendarEvent não substitui StudyPeriod."],
+      "fields": {
+        "id": { "lineage": [{ "origin": "pomi-generated" }] },
+        "startDate": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_CALENDAR_2026", "sourceField": "start" }] },
+        "endDate": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_CALENDAR_2026", "sourceField": "end" }] },
+        "description": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_CALENDAR_2026", "sourceField": "description" }] },
+        "tags": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_CALENDAR_2026", "sourceField": "categories" }] }
+      }
+    },
+    "DailyMenu": {
+      "nature": "pomi-abstraction",
+      "summary": "Conjunto de refeições publicadas para uma data na aplicação oficial de cardápio.",
+      "semanticAuthorities": [{ "sourceId": "UNICAMP_PREFEITURA_MENU" }],
+      "operationalSources": [{ "sourceId": "UNICAMP_PREFEITURA_MENU_APP", "collector": "cardapios", "injection": "daily-menus" }],
+      "limitations": ["Cardápios podem mudar após a coleta e a janela do coletor não determina sua frequência de execução."],
+      "fields": {
+        "id": { "lineage": [{ "origin": "pomi-generated" }] },
+        "date": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_PREFEITURA_MENU_APP", "sourceField": "date" }] },
+        "meals": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_PREFEITURA_MENU_APP", "sourceField": "meals" }] },
+        "createdAt": { "lineage": [{ "origin": "pomi-generated" }] },
+        "updatedAt": { "lineage": [{ "origin": "pomi-generated" }] }
+      }
+    },
+    "ExchangeNotice": {
+      "nature": "pomi-abstraction",
+      "summary": "Oportunidade de intercâmbio publicada no portal institucional e normalizada pelo POMI.",
+      "semanticAuthorities": [{ "sourceId": "UNICAMP_DERI_EXCHANGE_OPEN" }],
+      "operationalSources": [{ "sourceId": "UNICAMP_DERI_EXCHANGE_OPEN", "collector": "editais-intercambio", "injection": "exchange-notices" }, { "sourceId": "UNICAMP_DERI_EXCHANGE_CLOSED", "collector": "editais-intercambio", "injection": "exchange-notices" }],
+      "limitations": ["Datas estruturadas são interpretações do texto original e campos podem ser nulos quando a publicação não é reconhecida."],
+      "fields": {
+        "id": { "lineage": [{ "origin": "pomi-generated" }] },
+        "number": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DERI_EXCHANGE_OPEN", "sourceField": "number" }] },
+        "issuer": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DERI_EXCHANGE_OPEN", "sourceField": "issuer" }] },
+        "title": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DERI_EXCHANGE_OPEN", "sourceField": "title" }] },
+        "place": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DERI_EXCHANGE_OPEN", "sourceField": "place" }] },
+        "registrationOriginalText": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DERI_EXCHANGE_OPEN", "sourceField": "registrationText" }] },
+        "registrationStart": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DERI_EXCHANGE_OPEN", "sourceField": "registrationText" }] },
+        "registrationEnd": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DERI_EXCHANGE_OPEN", "sourceField": "registrationText" }] },
+        "files": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DERI_EXCHANGE_OPEN", "sourceField": "files" }] }
+      }
+    },
     "Course": {
       "nature": "pomi-abstraction",
       "summary": "Identidade reutilizável que o POMI forma a partir do código institucional de uma disciplina.",
@@ -130,6 +297,82 @@
         "bibliography": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "bibliography", "locator": { "label": "Bibliografia da disciplina" } }] },
         "sourceUrl": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "sourceUrl" }] },
         "prerequisites": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_DISCIPLINES_MC_2026", "sourceField": "prerequisites", "locator": { "label": "Pré-requisitos da disciplina" } }] }
+      }
+    },
+    "Program": {
+      "nature": "pomi-abstraction",
+      "summary": "Identidade estável que representa um curso independentemente da edição anual do catálogo.",
+      "semanticAuthorities": [{ "sourceId": "UNICAMP_DAC_PROGRAMS" }],
+      "operationalSources": [{ "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "collector": "catalog-programs", "injection": "catalog-programs" }],
+      "limitations": ["O código institucional identifica o curso, enquanto o ID e as contagens são definidos pelo POMI."],
+      "fields": {
+        "id": { "lineage": [{ "origin": "pomi-generated" }] },
+        "code": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "code", "locator": { "label": "Código do curso" } }] },
+        "name": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "name", "locator": { "label": "Nome do curso" } }] },
+        "unitId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_PROGRAMS", "sourceField": "unit" }] },
+        "unit": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_PROGRAMS", "sourceField": "unit" }] },
+        "catalogProgramsCount": { "lineage": [{ "origin": "aggregated", "sourceField": "catalogPrograms" }] }
+      }
+    },
+    "CatalogProgram": {
+      "nature": "pomi-abstraction",
+      "summary": "Representação de um curso e de suas configurações curriculares em uma edição do catálogo.",
+      "semanticAuthorities": [{ "sourceId": "UNICAMP_DAC_RGCG", "referenceLabels": ["Currículo Pleno e proposta de cumprimento", "Habilitações, ênfases e certificados", "Opção por língua estrangeira"] }, { "sourceId": "UNICAMP_CCG_18_2026", "referenceLabels": ["Caráter curricular"] }, { "sourceId": "UNICAMP_DAC_ACADEMIC_STRUCTURE" }, { "sourceId": "UNICAMP_DAC_FOREIGN_LANGUAGE" }],
+      "operationalSources": [{ "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "collector": "catalog-programs", "injection": "catalog-programs" }, { "sourceId": "UNICAMP_DAC_CURRICULUM_19_2026", "collector": "catalog-curricula", "injection": "catalog-programs" }],
+      "limitations": ["Turno, limites, blocos e variantes pertencem à edição do catálogo e não devem ser tratados como propriedades invariáveis de Program."],
+      "fields": {
+        "id": { "lineage": [{ "origin": "pomi-generated" }] },
+        "catalogId": { "lineage": [{ "origin": "linked", "sourceField": "catalog.year" }] },
+        "programId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "code" }] },
+        "title": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "name" }] },
+        "catalogYear": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_CATALOG_2026", "sourceField": "year", "locator": { "label": "Edição do catálogo" } }] },
+        "programCode": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "code" }] },
+        "programName": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "name" }] },
+        "shift": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "shift", "locator": { "label": "Turno" } }] },
+        "creditLimitType": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "creditLimit", "locator": { "label": "Limite de créditos para matrícula semestral" } }] },
+        "creditLimitFixedCredits": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "creditLimit", "locator": { "label": "Máximo de créditos por período" } }] },
+        "creditLimitBeforeThresholdCredits": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "creditLimit" }] },
+        "creditLimitThresholdCredits": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "creditLimit" }] },
+        "creditLimitCrBase": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "creditLimit" }] },
+        "creditLimitCrMultiplier": { "lineage": [{ "origin": "parsed", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "creditLimit" }] },
+        "professionalPracticeDescription": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "professionalPractice", "locator": { "label": "Exercício profissional" } }] },
+        "base": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_CURRICULUM_19_2026", "sourceField": "blocks", "locator": { "label": "Base comum do Currículo Pleno" } }] },
+        "variants": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_CURRICULUM_19_2026", "sourceField": "specializations", "locator": { "label": "Bacharelado e Licenciatura" } }] },
+        "languages": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_CURRICULUM_19_2026", "sourceField": "languageBlocks", "locator": { "label": "Opções de língua" } }] }
+      }
+    },
+    "Specialization": {
+      "nature": "pomi-abstraction",
+      "summary": "Abstração POMI para uma opção curricular associada ao programa, como habilitação ou ênfase quando publicada dessa forma pela Unicamp.",
+      "semanticAuthorities": [{ "sourceId": "UNICAMP_DAC_RGCG", "referenceLabels": ["Habilitações, ênfases e certificados"] }, { "sourceId": "UNICAMP_DAC_SPECIALIZATIONS" }, { "sourceId": "UNICAMP_DAC_PROGRAMS" }],
+      "operationalSources": [{ "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "collector": "catalog-programs", "injection": "catalog-programs" }],
+      "limitations": ["O contrato público não diferencia explicitamente habilitação de ênfase.", "Specialization identifica a opção; seus requisitos e valores de integralização pertencem à CatalogProgramVariant correspondente."],
+      "fields": {
+        "id": { "lineage": [{ "origin": "pomi-generated" }] },
+        "programId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "code" }] },
+        "programCode": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "code" }] },
+        "programName": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "name" }] },
+        "code": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "specialization.code", "locator": { "label": "Código da habilitação" } }] },
+        "name": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_PROGRAM_19_2026", "sourceField": "specialization.name", "locator": { "label": "Bacharelado ou Licenciatura" } }] },
+        "catalogProgramVariantsCount": { "lineage": [{ "origin": "aggregated", "sourceField": "catalogProgramVariants" }] }
+      }
+    },
+    "CurriculumSuggestion": {
+      "nature": "pomi-abstraction",
+      "summary": "Representação da proposta institucional de distribuição do currículo ao longo dos semestres.",
+      "semanticAuthorities": [{ "sourceId": "UNICAMP_DAC_RGCG", "referenceLabels": ["Currículo Pleno e proposta de cumprimento"] }, { "sourceId": "UNICAMP_DAC_ACADEMIC_STRUCTURE" }],
+      "operationalSources": [{ "sourceId": "UNICAMP_DAC_CURRICULUM_SUGGESTION_19_2026", "collector": "catalog-suggestions", "injection": "catalog-programs" }],
+      "limitations": ["A proposta sugere uma sequência e não cria requisitos adicionais ao Currículo Pleno.", "Códigos sem correspondência em Course não devem originar disciplinas inventadas."],
+      "fields": {
+        "id": { "lineage": [{ "origin": "pomi-generated" }] },
+        "catalogProgramVariantId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_CURRICULUM_SUGGESTION_19_2026", "sourceField": "specialization.code" }] },
+        "catalogProgramId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_CURRICULUM_SUGGESTION_19_2026", "sourceField": "programCode" }] },
+        "catalogYear": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_CATALOG_2026", "sourceField": "year" }] },
+        "programId": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_CURRICULUM_SUGGESTION_19_2026", "sourceField": "programCode" }] },
+        "programCode": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_CURRICULUM_SUGGESTION_19_2026", "sourceField": "programCode" }] },
+        "programName": { "lineage": [{ "origin": "source", "sourceId": "UNICAMP_DAC_CURRICULUM_SUGGESTION_19_2026", "sourceField": "name" }] },
+        "specialization": { "lineage": [{ "origin": "linked", "sourceId": "UNICAMP_DAC_CURRICULUM_SUGGESTION_19_2026", "sourceField": "suggestion.code", "locator": { "label": "Variante da proposta" } }] },
+        "semesters": { "lineage": [{ "origin": "normalized", "sourceId": "UNICAMP_DAC_CURRICULUM_SUGGESTION_19_2026", "sourceField": "semesters", "locator": { "label": "Proposta para cumprimento do currículo" } }] }
       }
     }
   }

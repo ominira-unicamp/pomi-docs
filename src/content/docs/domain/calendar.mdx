@@ -1,0 +1,78 @@
+---
+title: Calendário acadêmico
+description: Eventos publicados no calendário institucional e sua diferença para períodos acadêmicos.
+tableOfContents: false
+concepts: [CalendarEvent, CalendarTag, StudyPeriod]
+operations: [listCalendarEvents, getCalendarEvents, listCalendarTags, getCalendarTags]
+officialSources: [UNICAMP_DAC_CALENDAR_2026, UNICAMP_DAC_RGCG]
+---
+
+import ConceptTechnicalSurface from "../../../components/ConceptTechnicalSurface.astro";
+import ConceptSchema from "../../../components/ConceptSchema.astro";
+
+`CalendarEvent` representa uma ocorrência publicada no calendário da DAC.
+`CalendarTag` organiza as categorias associadas a esses eventos.
+
+<div class="takeaway"><strong>A distinção central:</strong> `StudyPeriod` identifica um período acadêmico; `CalendarEvent` registra um acontecimento ou prazo publicado.</div>
+
+<nav class="contextual-nav" aria-label="Seções desta página">
+  <a href="#calendar-model">Modelo</a><a href="#calendar-usage">Consultar</a><a href="#calendar-time">Temporalidade</a><a href="#calendar-reference">Referência</a><a href="#calendar-sources">Fontes</a>
+</nav>
+
+<span id="calendar-model" class="section-anchor" aria-hidden="true"></span>
+
+## O modelo
+
+```text
+Calendário institucional
+└── CalendarEvent
+    ├── startDate
+    ├── endDate
+    ├── description
+    └── CalendarTag[]
+```
+
+Um evento pode representar uma data pontual ou um intervalo. As tags são
+normalizadas separadamente para que eventos diferentes compartilhem categorias.
+
+<span id="calendar-usage" class="section-anchor" aria-hidden="true"></span>
+
+## Como consultar
+
+<ConceptTechnicalSurface concept="CalendarEvent" title="Consultar eventos" description="Filtre eventos por datas ou categoria." filterExample={{ label: "Eventos iniciados em uma data", expressions: [{ field: "startDate", operator: "eq", value: "2026-01-01" }] }} />
+
+<ConceptTechnicalSurface concept="CalendarTag" title="Consultar categorias" description="Localize as categorias normalizadas do calendário." filterExample={{ label: "Categoria por nome", expressions: [{ field: "name", operator: "eq", value: "Matrícula" }] }} />
+
+<span id="calendar-time" class="section-anchor" aria-hidden="true"></span>
+
+## Temporalidade e atualização
+
+O calendário possui conteúdo próprio para cada ano e pode receber alterações.
+As datas devem ser interpretadas dentro da edição consultada. A publicação é
+institucionalmente anual; a frequência da sincronização POMI não integra o
+contrato público.
+
+## Limites de interpretação
+
+- Uma tag não substitui a descrição integral do evento.
+- Um evento do calendário não define sozinho o início ou término de `StudyPeriod`.
+- A ausência de um evento no POMI não prova que a instituição nunca o publicou.
+
+<span id="calendar-reference" class="section-anchor" aria-hidden="true"></span>
+
+## Referência técnica
+
+<ConceptSchema names={["CalendarEvent", "CalendarTag"]} />
+
+<span id="calendar-sources" class="section-anchor" aria-hidden="true"></span>
+
+## Fontes e proveniência
+
+O coletor interpreta eventos, intervalos, descrições e categorias na edição
+anual do calendário; o POMI normaliza as categorias como tags reutilizáveis.
+As publicações que sustentam essa interpretação aparecem abaixo.
+
+## Continue lendo
+
+- [Turmas, horários e períodos acadêmicos](/domain/classes-and-periods/)
+- [Fontes, autoridade e proveniência](/domain/provenance/)

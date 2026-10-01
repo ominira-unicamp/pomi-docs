@@ -115,8 +115,110 @@ test("semantic slice renders provenance, generated fields and prerequisite varia
   await expect(page.getByRole("heading", { name: "Quatro tempos diferentes" })).toBeVisible();
 });
 
+test("curriculum slice explains History variants, requirements and technical access", async ({ page }) => {
+  await page.goto("/domain/curricula/");
+  await expect(page.getByRole("heading", { name: "Currículos e propostas de cumprimento" })).toBeVisible();
+  await expect(page.getByText("curso 19 — História", { exact: false }).first()).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: "Currículo Pleno" })).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: "Proposta para cumprimento" })).toBeVisible();
+  await expect(page.getByText("AA", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText("AB", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText(/186 créditos/)).toBeVisible();
+  await expect(page.getByText(/240 créditos/)).toBeVisible();
+
+  const catalogProgramSurface = page.locator("#using-catalog-program");
+  await expect(catalogProgramSurface.getByRole("heading", { name: "Obter o currículo publicado" })).toBeVisible();
+  await expect(catalogProgramSurface.getByText("sdk.data.catalogPrograms.list()", { exact: true })).toBeVisible();
+  await expect(catalogProgramSurface.getByText("GET /catalog-program", { exact: true })).toBeVisible();
+  await expect(page.getByRole("main")).not.toContainText("Consultar História no Catálogo 2026");
+
+  const shift = page.locator("#field-enum-CatalogProgram-shift");
+  await expect(shift.locator(".semantic-value")).toHaveCount(2);
+  await expect(page.getByText(/36 créditos por período letivo/).first()).toBeVisible();
+
+  const requirements = page.locator("#union-CourseRequirement");
+  await expect(requirements.getByText("any", { exact: true })).toBeVisible();
+  await expect(requirements.getByText("prefix", { exact: true })).toBeVisible();
+  await expect(requirements.getByText("specific", { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Opção por língua estrangeira", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.locator("p").filter({ hasText: "não diferencia explicitamente habilitação de ênfase" }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Primeiro semestre sugerido" })).toBeVisible();
+  await expect(page.getByText("electiveCredits: 0", { exact: true })).toBeVisible();
+  await expect(page.getByText(/20 \+ 16 × 0,75 = 32 créditos/)).toBeVisible();
+
+  const payload = page.locator("details", {
+    has: page.locator("summary", { hasText: "Ver exemplos de currículo e proposta" })
+  });
+  await expect(payload.locator("pre", { hasText: "HH183" }).first()).not.toBeVisible();
+  await payload.locator("summary").click();
+  await expect(payload.locator("pre", { hasText: "HH183" }).first()).toBeVisible();
+
+  const catalogProgramContract = page.locator("#contract-catalog-program");
+  await catalogProgramContract.locator("summary").click();
+  await expect(catalogProgramContract.getByRole("link", { name: "Explicação do turno" }))
+    .toHaveAttribute("href", "#field-enum-CatalogProgram-shift");
+  await expect(page.getByRole("main")).not.toContainText("catalog-programs →");
+  await expect(page.getByRole("main")).not.toContainText("Sem descrição adicional");
+});
+
+test("understanding-data section exposes every domain slice", async ({ page }) => {
+  await page.goto("/domain/overview/");
+  for (const name of [
+    "Estrutura acadêmica",
+    "Disciplinas e catálogos",
+    "Pré-requisitos",
+    "Currículos",
+    "Turmas e horários",
+    "Docentes",
+    "Calendário acadêmico",
+    "Restaurante universitário",
+    "Intercâmbio"
+  ]) {
+    await expect(page.getByRole("link", { name, exact: true }).first()).toBeVisible();
+  }
+
+  await page.goto("/domain/classes-and-periods/");
+  await expect(page.getByText("Course", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText("Class", { exact: true }).first()).toBeVisible();
+  await expect(page.getByText("FIRST_SEMESTER", { exact: true })).toBeVisible();
+  await expect(page.getByText(/Ausência de horário não significa ausência da turma/)).toBeVisible();
+
+  await page.goto("/domain/professors/");
+  await expect(page.getByText("ProfessorDataPortalProfile", { exact: true }).first()).toBeVisible();
+  await expect(
+    page.locator("#union-AcademicPositionAffiliation").getByText("POSTDOCTORAL_PROGRAM", { exact: true }),
+  ).toBeVisible();
+  await expect(page.locator("p").filter({ hasText: "rejeita relações ambíguas" })).toBeVisible();
+
+  await page.goto("/domain/calendar/");
+  await expect(page.locator(".takeaway").filter({ hasText: "StudyPeriod identifica um período acadêmico" })).toBeVisible();
+
+  await page.goto("/domain/daily-menus/");
+  await expect(page.locator("#enum-MealStatus").getByText("NOT_REGISTERED", { exact: true })).toBeVisible();
+  await expect(page.getByText(/não necessariamente uma falha de coleta/)).toBeVisible();
+
+  await page.goto("/domain/exchange/");
+  await expect(page.getByText("registrationOriginalText", { exact: true }).first()).toBeVisible();
+  await expect(page.locator("p").filter({ hasText: "não deve corrigir silenciosamente" })).toBeVisible();
+});
+
 test("domain pages do not overflow the viewport", async ({ page }) => {
-  for (const path of ["/domain/courses-and-catalogs/", "/domain/prerequisites/"]) {
+  for (const path of [
+    "/domain/overview/",
+    "/domain/academic-structure/",
+    "/domain/courses-and-catalogs/",
+    "/domain/prerequisites/",
+    "/domain/curricula/",
+    "/domain/classes-and-periods/",
+    "/domain/professors/",
+    "/domain/calendar/",
+    "/domain/daily-menus/",
+    "/domain/exchange/"
+  ]) {
     await page.goto(path);
     await page.locator("details").evaluateAll((details) => {
       for (const detail of details) (detail as HTMLDetailsElement).open = true;
@@ -130,16 +232,24 @@ test("domain pages do not overflow the viewport", async ({ page }) => {
 });
 
 test("core pages have no serious accessibility violations", async ({ page }) => {
+  test.setTimeout(90_000);
   for (const path of [
     "/",
     "/start/tutorial/",
     "/reference/data-api/",
     "/domain/provenance/",
     "/domain/courses-and-catalogs/",
-    "/domain/prerequisites/"
+    "/domain/prerequisites/",
+    "/domain/curricula/",
+    "/domain/academic-structure/",
+    "/domain/classes-and-periods/",
+    "/domain/professors/",
+    "/domain/calendar/",
+    "/domain/daily-menus/",
+    "/domain/exchange/"
   ]) {
     await page.goto(path);
-    if (path === "/domain/courses-and-catalogs/" || path === "/domain/prerequisites/") {
+    if (path.startsWith("/domain/")) {
       await page.locator("details").evaluateAll((details) => {
         for (const detail of details) (detail as HTMLDetailsElement).open = true;
       });

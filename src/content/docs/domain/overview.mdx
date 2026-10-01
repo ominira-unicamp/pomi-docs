@@ -1,27 +1,73 @@
 ---
 title: Visão geral do domínio
-description: Fronteiras entre identidade, catálogo, currículo e oferta.
-concepts:
-  - Course
-  - CatalogCourse
-  - CatalogProgram
-  - CurriculumSuggestion
-  - Class
-  - StudyPeriod
-officialSources:
-  - UNICAMP_DAC_RGCG
-  - UNICAMP_DAC_ACADEMIC_STRUCTURE
+description: Mapa dos conceitos públicos e das fronteiras entre os domínios.
+tableOfContents: false
+concepts: [Unit, Department, Course, CatalogCourse, Program, CatalogProgram, CurriculumSuggestion, Class, StudyPeriod, Professor, CalendarEvent, DailyMenu, ExchangeNotice]
+officialSources: [UNICAMP_DAC_RGCG, UNICAMP_DAC_ACADEMIC_STRUCTURE, UNICAMP_DAC_TIMETABLE_MC202_2026_2, UNICAMP_DATA_PORTAL_PROFESSORS, UNICAMP_DAC_CALENDAR_2026, UNICAMP_PREFEITURA_MENU, UNICAMP_DERI_EXCHANGE_OPEN]
 ---
 
+Os recursos públicos do POMI pertencem a domínios diferentes. Este mapa serve
+para localizar um conceito antes de aprofundar sua semântica ou seu contrato.
+
+<nav class="contextual-nav" aria-label="Domínios documentados">
+  <a href="#academic-structure">Estrutura</a><a href="#catalog-domain">Catálogos</a><a href="#offering-domain">Oferta</a><a href="#people-domain">Pessoas</a><a href="#university-life">Vida universitária</a>
+</nav>
+
+## Mapa do modelo
 
 ```text
-Course ──> CatalogCourse ──> Catalog
-   │
-   └─────> Class ──> ClassSchedule
-                 └─> StudyPeriod
+Unit
+├── Course ──> CatalogCourse ──> Catalog
+├── Program ─> CatalogProgram ─> CurriculumSuggestion
+└── Department ─> ProfessorDataPortalProfile
 
-Program ──> CatalogProgram ──> CurriculumSuggestion
+Course ─> Class ─> ClassSchedule ─> Room
+           ├─────> StudyPeriod
+           └─────> Professor
+
+CalendarEvent     DailyMenu ─> Meal     ExchangeNotice
 ```
 
 Schemas públicos não são tabelas Prisma, e conceitos do POMI nem sempre possuem
-o mesmo nome nas fontes oficiais. As páginas seguintes explicam essas fronteiras.
+o mesmo nome nas fontes oficiais.
+
+<span id="academic-structure" class="section-anchor" aria-hidden="true"></span>
+
+## Estrutura acadêmica
+
+- [Estrutura acadêmica](/domain/academic-structure/) explica `Unit` e `Department`.
+- [Currículos](/domain/curricula/) explica como `Program` ganha configuração em um catálogo.
+
+<span id="catalog-domain" class="section-anchor" aria-hidden="true"></span>
+
+## Catálogos e formação
+
+- [Disciplinas e catálogos](/domain/courses-and-catalogs/) separa identidade e edição catalogal.
+- [Pré-requisitos](/domain/prerequisites/) explica alternativas, conjunções e formas de cumprimento.
+- [Currículos](/domain/curricula/) documenta requisitos, percursos e propostas por semestre.
+
+<span id="offering-domain" class="section-anchor" aria-hidden="true"></span>
+
+## Oferta acadêmica
+
+- [Turmas e horários](/domain/classes-and-periods/) conecta disciplina, período, turma, docente, sala e encontro.
+- [Calendário acadêmico](/domain/calendar/) diferencia eventos institucionais de períodos acadêmicos.
+
+<span id="people-domain" class="section-anchor" aria-hidden="true"></span>
+
+## Pessoas e organização
+
+- [Docentes](/domain/professors/) separa a identidade usada em turmas do perfil institucional enriquecido.
+
+<span id="university-life" class="section-anchor" aria-hidden="true"></span>
+
+## Vida universitária e oportunidades
+
+- [Restaurante universitário](/domain/daily-menus/) explica cardápios e refeições.
+- [Intercâmbio](/domain/exchange/) explica oportunidades, inscrições e documentos.
+
+## Regra de leitura
+
+Cada página separa significado institucional, representação POMI, forma de
+consulta e contrato exato. Para entender o caminho entre fonte e resposta,
+consulte [Proveniência e atualização](/domain/provenance/).

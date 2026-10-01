@@ -1,6 +1,7 @@
 ---
 title: Pré-requisitos
 description: Como interpretar alternativas, conjunções e formas de cumprimento.
+tableOfContents: false
 concepts: [CatalogCoursePrerequisiteItem]
 operations: [listCatalogCourses, getCatalogCourses]
 officialSources: [UNICAMP_DAC_DISCIPLINE_RULES, UNICAMP_DAC_RGCG]
@@ -10,6 +11,7 @@ import SourceRef from "../../../components/SourceRef.astro";
 import EnumSemantics from "../../../components/EnumSemantics.astro";
 import UnionSemantics from "../../../components/UnionSemantics.astro";
 import ConceptSchema from "../../../components/ConceptSchema.astro";
+import ConceptTechnicalSurface from "../../../components/ConceptTechnicalSurface.astro";
 
 O POMI preserva a lógica dos requisitos divulgados pela DAC e a representa de forma estrutural. A base institucional é descrita nas <SourceRef id="UNICAMP_DAC_DISCIPLINE_RULES" label="regras de disciplinas e pré-requisitos" />.
 
@@ -22,6 +24,12 @@ substituem a redação institucional nem uma decisão acadêmica.
   cada grupo <code>all</code> reúne condições que precisam ser satisfeitas em
   conjunto.
 </div>
+
+<nav class="contextual-nav" aria-label="Seções desta página">
+  <a href="#prerequisite-expression">Expressão</a><a href="#prerequisite-items">Itens</a><a href="#prerequisite-usage">Consultar</a><a href="#prerequisite-limits">Limites</a><a href="#prerequisite-reference">Referência</a>
+</nav>
+
+<span id="prerequisite-expression" class="section-anchor" aria-hidden="true"></span>
 
 ## A forma `any` de grupos `all`
 
@@ -37,6 +45,8 @@ substituem a redação institucional nem uma decisão acadêmica.
 Leia de fora para dentro: basta satisfazer **qualquer** grupo de `any`, mas é preciso satisfazer **todos** os itens do grupo escolhido. O exemplo equivale a `(A AND B) OR C`.
 
 ## Como interpretar cada item
+
+<span id="prerequisite-items" class="section-anchor" aria-hidden="true"></span>
 
 <UnionSemantics name="CatalogCoursePrerequisiteItem" title="Tipos de item" headingLevel="h3" />
 
@@ -57,8 +67,39 @@ de disciplina de requisitos especiais. A estrutura resultante pertence ao
 formulação oficial, ela deve conservar o vínculo com o catálogo e sua URL de
 origem.
 
-## Detalhes técnicos
+<span id="prerequisite-usage" class="section-anchor" aria-hidden="true"></span>
+
+## Como consultar
+
+Os pré-requisitos pertencem a `CatalogCourse`. Consulte a disciplina na edição
+do catálogo correspondente; não use `Course` como se a regra fosse invariável.
+
+<ConceptTechnicalSurface concept="CatalogCourse" title="Consultar pré-requisitos catalogados" description="Localize a representação da disciplina no catálogo desejado." filterExample={{ label: "Disciplina em um catálogo", expressions: [{ field: "catalogYear", operator: "eq", value: 2026 }, { field: "courseCode", operator: "eq", value: "MC202" }] }} />
+
+<span id="prerequisite-limits" class="section-anchor" aria-hidden="true"></span>
+
+## Limites de interpretação
+
+- `courseId: null` indica que o código publicado não foi relacionado com segurança.
+- Requisitos especiais não devem ser convertidos em disciplinas aproximadas.
+- A estrutura normalizada não substitui a redação original para auditoria acadêmica.
+- Pré-requisitos pertencem à edição do catálogo consultada.
+
+<span id="prerequisite-reference" class="section-anchor" aria-hidden="true"></span>
+
+## Referência técnica
 
 Os contratos completos ficam disponíveis sob demanda para não interromper a leitura conceitual.
 
 <ConceptSchema names={["CatalogCoursePrerequisiteItem", "CatalogCoursePrerequisiteFulfillment", "CatalogCourseSpecialRequirement"]} />
+
+## Proveniência
+
+O scraper preserva a estrutura publicada, separa requisitos de disciplina e
+condições especiais e tenta relacionar códigos às identidades conhecidas. As
+fontes institucionais usadas nessa interpretação estão listadas abaixo.
+
+## Continue lendo
+
+- [Disciplinas e catálogos](/domain/courses-and-catalogs/)
+- [Currículos](/domain/curricula/)

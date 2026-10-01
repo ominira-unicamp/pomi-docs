@@ -1,6 +1,7 @@
 ---
 title: Turmas, horários e períodos acadêmicos
 description: Como uma disciplina se transforma em oferta concreta.
+tableOfContents: false
 concepts:
   - Class
   - ClassSchedule
@@ -14,13 +15,85 @@ officialSources:
   - UNICAMP_DAC_ENROLLMENT
 ---
 
+import ConceptTechnicalSurface from "../../../components/ConceptTechnicalSurface.astro";
+import ConceptSchema from "../../../components/ConceptSchema.astro";
+import EnumSemantics from "../../../components/EnumSemantics.astro";
 
-`Class` é uma oferta concreta de uma disciplina em um `StudyPeriod`.
-`ClassSchedule` descreve horários e locais conhecidos dessa oferta.
+`Course` identifica uma disciplina. `Class` representa uma turma concreta dessa
+disciplina em um `StudyPeriod`; `ClassSchedule` registra seus encontros.
 
-Uma turma sem horário cadastrado continua sendo uma turma válida. Uma turma pode
-ter múltiplos docentes, e o total de matriculados pode superar o número nominal
-de vagas. Vaga disponível também não equivale a garantia de matrícula.
+<div class="takeaway"><strong>A distinção central:</strong> uma disciplina pode existir sem ser oferecida, e uma turma pode existir sem possuir horário cadastrado.</div>
 
-O contrato atual de `StudyPeriod` possui data inicial, mas não data final
-explícita. Consumidores não devem inferir o término pelo calendário civil.
+<nav class="contextual-nav" aria-label="Seções desta página">
+  <a href="#class-model">Modelo</a><a href="#class-usage">Consultar</a><a href="#class-periods">Períodos</a><a href="#class-schedules">Horários</a><a href="#class-reference">Referência</a><a href="#class-sources">Fontes</a>
+</nav>
+
+<span id="class-model" class="section-anchor" aria-hidden="true"></span>
+
+## O modelo da oferta
+
+```text
+Course ──> Class ──> StudyPeriod
+             ├────> Professor
+             ├────> reservationPrograms
+             └────> ClassSchedule ──> Room
+```
+
+No exemplo institucional `MC202` em 2S/2026, o Caderno de Horários publica as
+turmas, docentes, reservas e encontros. O POMI liga os códigos publicados às
+identidades conhecidas quando consegue resolvê-las.
+
+<span id="class-usage" class="section-anchor" aria-hidden="true"></span>
+
+## Como consultar
+
+<ConceptTechnicalSurface concept="Class" title="Encontrar turmas de uma disciplina" description="Consulte ofertas concretas por disciplina e período." filterExample={{ label: "Turmas de MC202 em 2026", expressions: [{ field: "courseCode", operator: "eq", value: "MC202" }, { field: "studyPeriodYear", operator: "eq", value: 2026 }] }} />
+
+<ConceptTechnicalSurface concept="ClassSchedule" title="Encontrar encontros" description="Consulte os horários associados às turmas." filterExample={{ label: "Horários de MC202", expressions: [{ field: "course.code", operator: "eq", value: "MC202" }] }} />
+
+<span id="class-periods" class="section-anchor" aria-hidden="true"></span>
+
+## Períodos acadêmicos
+
+`StudyPeriod` registra ano, período normalizado e a data inicial conhecida. Ele
+não expõe data final; `CalendarEvent` é outro conceito e não deve ser usado como
+substituto implícito.
+
+<EnumSemantics name="YearPeriod" showHeading={false} />
+
+<span id="class-schedules" class="section-anchor" aria-hidden="true"></span>
+
+## Horários, salas e reservas
+
+<EnumSemantics name="DayOfWeek" showHeading={false} />
+
+Uma turma sem itens em seus horários continua válida. Reservas identificam
+programas priorizados na publicação, mas não garantem matrícula. O número de
+matriculados também pode superar o número nominal de vagas durante o processo.
+
+## Limites de interpretação
+
+- O contrato não informa o término de `StudyPeriod`.
+- Ausência de horário não significa ausência da turma.
+- Sala, docente ou unidade podem depender de resolução e normalização do POMI.
+- Vaga publicada, reserva e elegibilidade são informações diferentes.
+
+<span id="class-reference" class="section-anchor" aria-hidden="true"></span>
+
+## Referência técnica
+
+<ConceptSchema names={["StudyPeriod", "Class", "ClassSchedule", "Room", "Professor"]} />
+
+<span id="class-sources" class="section-anchor" aria-hidden="true"></span>
+
+## Fontes e proveniência
+
+O POMI percorre período, unidade, disciplina e turma no Caderno de Horários;
+depois relaciona códigos e nomes às identidades conhecidas. As fontes abaixo
+incluem uma oferta com horários, uma turma sem horário e casos de matrícula.
+
+## Continue lendo
+
+- [Disciplinas e catálogos](/domain/courses-and-catalogs/)
+- [Calendário acadêmico](/domain/calendar/)
+- [Docentes](/domain/professors/)

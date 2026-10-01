@@ -2,11 +2,16 @@
 import manifest from "../../.cache/generated/data-domain-manifest.json";
 import semantics from "../../semantics/data-api.json";
 import registry from "../../sources/unicamp.json";
-import type { DomainSemantics } from "../../scripts/semantics.ts";
+import {
+  commonSemanticSources,
+  specificSemanticSources,
+  type DomainSemantics,
+  type SemanticSource
+} from "../../scripts/semantics.ts";
 import { resolveSource, type OfficialSourceRegistry } from "../../scripts/source-registry.ts";
 
-interface Props { name: string; title?: string; headingLevel?: "h2" | "h3" }
-const { name, title, headingLevel = "h2" } = Astro.props;
+interface Props { name: string; title?: string; headingLevel?: "h2" | "h3"; showHeading?: boolean; stacked?: boolean }
+const { name, title, headingLevel = "h2", showHeading = true, stacked = false } = Astro.props;
 const Heading = headingLevel;
 const ItemHeading = headingLevel === "h3" ? "h4" : "h3";
 const documented = (semantics as DomainSemantics).unions[name];
@@ -14,12 +19,24 @@ if (!documented) throw new Error(`Missing documented union: ${name}`);
 const contract = manifest.concepts[name as keyof typeof manifest.concepts];
 if (!contract?.union) throw new Error(`Unknown union: ${name}`);
 const sourceRegistry = registry as OfficialSourceRegistry;
+const values = contract.union.variants.map((variant) => documented.variants[variant.value]);
+const commonSources = commonSemanticSources(values);
+const sourceReference = (reference: SemanticSource) => {
+  const source = resolveSource(sourceRegistry, reference.sourceId);
+  return source ? { source, suffix: reference.referenceLabel ? ` — ${reference.referenceLabel}` : "" } : null;
+};
 ---
 
 <section class="knowledge-section" aria-labelledby={`union-${name}`}>
-  <Heading id={`union-${name}`}>{title ?? name}</Heading>
+  {showHeading && <Heading id={`union-${name}`}>{title ?? name}</Heading>}
   <p>O campo discriminador é <code>{contract.union.discriminator}</code>.</p>
-  <div class="semantic-grid">
+  {commonSources.length > 0 && <p class="semantic-sources"><small>
+    Fonte{commonSources.length > 1 ? "s" : ""}: {commonSources.map((reference, index) => {
+      const resolved = sourceReference(reference);
+      return resolved && <>{index > 0 && "; "}<a href={resolved.source.url}>{resolved.source.title}</a>{resolved.suffix}</>;
+    })}
+  </small></p>}
+  <div id={!showHeading ? `union-${name}` : undefined} class={stacked ? "semantic-list" : "semantic-grid"}>
     {contract.union.variants.map((variant) => {
       const semantic = documented.variants[variant.value];
       if (!semantic) throw new Error(`Missing union semantics: ${name}.${variant.value}`);
@@ -29,9 +46,9 @@ const sourceRegistry = registry as OfficialSourceRegistry;
           <p><strong>{semantic.label}</strong></p>
           <p>{semantic.description}</p>
           <p><small>Schema: <code>{variant.publicName ?? variant.schema}</code></small></p>
-          {semantic.sources.map((reference) => {
-            const source = resolveSource(sourceRegistry, reference.sourceId);
-            return source && <p><small>Fonte: <a href={source.url}>{source.title}</a></small></p>;
+          {specificSemanticSources(semantic, commonSources).map((reference) => {
+            const resolved = sourceReference(reference);
+            return resolved && <p><small>Fonte: <a href={resolved.source.url}>{resolved.source.title}</a>{resolved.suffix}</small></p>;
           })}
         </article>
       );

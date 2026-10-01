@@ -58,6 +58,7 @@ export type ManifestConcept = {
     required: boolean;
     nullable: boolean;
     description: string | null;
+    enumValues: string[] | null;
   }>;
   enumValues: string[] | null;
   nullable: boolean;
@@ -138,7 +139,8 @@ function manifestFields(schema: JsonObject, schemas: JsonObject): ManifestConcep
         field.nullable === true ||
         referencedSchema?.nullable === true ||
         (Array.isArray(referencedSchema?.enum) && referencedSchema.enum.includes(null)),
-      description: typeof field.description === "string" ? field.description : null
+      description: typeof field.description === "string" ? field.description : null,
+      enumValues: manifestEnumValues(field) ?? (referencedSchema ? manifestEnumValues(referencedSchema) : null)
     };
   });
 }

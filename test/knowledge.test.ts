@@ -48,6 +48,10 @@ describe("semantic documentation contracts", () => {
       "UNIT_DISCRETION"
     ]);
     expect(manifest.concepts.CourseOfferingPeriod.nullable).toBe(true);
+    expect(
+      manifest.concepts.CatalogProgram.fields.find(({ name }) => name === "creditLimitType")
+        ?.enumValues
+    ).toEqual(["NONE", "FIXED", "CR_FORMULA"]);
     expect(manifest.concepts.CatalogCoursePrerequisiteItem.union).toMatchObject({
       discriminator: "type",
       variants: [{ value: "COURSE" }, { value: "SPECIAL_REQUIREMENT" }]
@@ -69,6 +73,49 @@ describe("semantic documentation contracts", () => {
     expect(provenance.concepts.CatalogCourse.fields.workload.lineage[0].locator?.label).toBe(
       "Vetor de carga horária"
     );
+  });
+
+  test("documents the History 19 curriculum slice", async () => {
+    const { registry, provenance, semantics } = await knowledgeBase();
+    const history = resolveSource(registry, "UNICAMP_DAC_CURRICULUM_19_2026");
+    const foreignLanguage = resolveSource(registry, "UNICAMP_DAC_FOREIGN_LANGUAGE");
+    expect(history?.id).toBe("UNICAMP_DAC_CATALOG");
+    expect(history?.instance?.context).toMatchObject({ catalogYear: 2026, programCode: "19" });
+    expect(foreignLanguage?.title).toBe("Opção por Língua Estrangeira");
+    expect(semantics.fieldEnums["CatalogProgram.shift"].values.DAYTIME.label).toBe("Integral");
+    expect(semantics.fieldEnums["CatalogProgram.creditLimitType"].values.FIXED.description)
+      .toContain("36");
+    expect(semantics.unions.CourseRequirement.variants).toHaveProperty("prefix");
+    expect(provenance.concepts.Specialization.limitations).toContain(
+      "O contrato público não diferencia explicitamente habilitação de ênfase."
+    );
+    expect(provenance.concepts.CatalogProgram.semanticAuthorities).toContainEqual({
+      sourceId: "UNICAMP_CCG_18_2026",
+      referenceLabels: ["Caráter curricular"]
+    });
+    expect(provenance.concepts.CatalogProgram.fields.base.lineage[0].locator?.label).toBe(
+      "Base comum do Currículo Pleno"
+    );
+  });
+
+  test("covers the remaining understanding-data domains", async () => {
+    const { registry, provenance, semantics } = await knowledgeBase();
+    expect(resolveSource(registry, "UNICAMP_DATA_PORTAL_PROFESSORS")?.title)
+      .toBe("Portal Docentes e Pesquisadores");
+    expect(resolveSource(registry, "UNICAMP_PREFEITURA_MENU_APP")?.title)
+      .toBe("Aplicação oficial de cardápio");
+    expect(resolveSource(registry, "UNICAMP_DERI_EXCHANGE_CLOSED")?.title)
+      .toBe("Editais de intercâmbio encerrados");
+    expect(semantics.enums.YearPeriod.values).toHaveProperty("SECOND_SEMESTER");
+    expect(semantics.enums.MealStatus.values.NOT_REGISTERED.description)
+      .toContain("não equivale automaticamente a falha de coleta");
+    expect(semantics.unions.AcademicPositionAffiliation.variants)
+      .toHaveProperty("POSTDOCTORAL_PROGRAM");
+    expect(provenance.concepts.StudyPeriod.limitations[0]).toContain("data final");
+    expect(provenance.concepts.ProfessorDataPortalProfile.limitations[0])
+      .toContain("rejeita ambiguidades");
+    expect(provenance.concepts.ExchangeNotice.fields.registrationOriginalText.lineage[0].origin)
+      .toBe("source");
   });
 
   test("rejects unknown sources and incomplete field coverage", async () => {
@@ -103,5 +150,11 @@ describe("semantic documentation contracts", () => {
     expect(() =>
       validateKnowledgeBase(values.manifest, values.registry, values.provenance, extraVariant)
     ).toThrow(/CatalogCoursePrerequisiteItem variants: semantic coverage mismatch/);
+
+    const missingFieldEnum = structuredClone(values.semantics);
+    delete missingFieldEnum.fieldEnums["CatalogProgram.shift"].values.DAYTIME;
+    expect(() =>
+      validateKnowledgeBase(values.manifest, values.registry, values.provenance, missingFieldEnum)
+    ).toThrow(/CatalogProgram.shift values: semantic coverage mismatch/);
   });
 });

@@ -2,12 +2,16 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "enums", "unions"],
+  "required": ["schemaVersion", "enums", "fieldEnums", "unions"],
   "properties": {
-    "schemaVersion": { "const": 1 },
+    "schemaVersion": { "const": 2 },
     "enums": {
       "type": "object",
       "additionalProperties": { "$ref": "#/$defs/semanticSet" }
+    },
+    "fieldEnums": {
+      "type": "object",
+      "additionalProperties": { "$ref": "#/$defs/fieldSemanticSet" }
     },
     "unions": {
       "type": "object",
@@ -42,6 +46,21 @@
       "additionalProperties": false,
       "required": ["values"],
       "properties": {
+        "nullMeaning": { "type": "string", "minLength": 1 },
+        "values": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "$ref": "#/$defs/value" }
+        }
+      }
+    },
+    "fieldSemanticSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["concept", "field", "values"],
+      "properties": {
+        "concept": { "type": "string", "minLength": 1 },
+        "field": { "type": "string", "minLength": 1 },
         "nullMeaning": { "type": "string", "minLength": 1 },
         "values": {
           "type": "object",

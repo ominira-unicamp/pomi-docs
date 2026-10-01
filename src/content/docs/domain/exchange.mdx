@@ -1,0 +1,84 @@
+---
+title: Intercâmbio
+description: Oportunidades, destinos, inscrições e documentos publicados pela DERI.
+tableOfContents: false
+concepts: [ExchangeNotice, ExchangePlace, ExchangeNoticeFile]
+operations: [listExchangeNotices, getExchangeNotices]
+officialSources: [UNICAMP_DERI_EXCHANGE_OPEN, UNICAMP_DERI_EXCHANGE_CLOSED]
+---
+
+import ConceptTechnicalSurface from "../../../components/ConceptTechnicalSurface.astro";
+import ConceptSchema from "../../../components/ConceptSchema.astro";
+
+`ExchangeNotice` representa uma oportunidade publicada pela DERI ou por outro
+emissor apresentado no portal. Destino e documentos são estruturas associadas.
+
+<div class="takeaway"><strong>A distinção central:</strong> o POMI preserva o texto original das inscrições e expõe separadamente as datas que conseguiu interpretar.</div>
+
+<nav class="contextual-nav" aria-label="Seções desta página">
+  <a href="#exchange-model">Modelo</a><a href="#exchange-usage">Consultar</a><a href="#exchange-dates">Inscrições</a><a href="#exchange-reference">Referência</a><a href="#exchange-sources">Fontes</a>
+</nav>
+
+<span id="exchange-model" class="section-anchor" aria-hidden="true"></span>
+
+## O modelo
+
+```text
+ExchangeNotice
+├── number / issuer / title
+├── ExchangePlace
+├── registrationOriginalText
+├── registrationStart / registrationEnd
+└── ExchangeNoticeFile[]
+```
+
+`ExchangePlace` normaliza o destino apresentado na publicação.
+`ExchangeNoticeFile` preserva nome e URL dos documentos vinculados.
+
+<span id="exchange-usage" class="section-anchor" aria-hidden="true"></span>
+
+## Como consultar
+
+<ConceptTechnicalSurface concept="ExchangeNotice" title="Encontrar oportunidades" description="Consulte editais por título, emissor, destino ou período de inscrição." filterExample={{ label: "Editais com destino na França", expressions: [{ field: "placeName", operator: "eq", value: "França" }] }} />
+
+<span id="exchange-dates" class="section-anchor" aria-hidden="true"></span>
+
+## Texto publicado e datas interpretadas
+
+```text
+publicação oficial
+        ↓
+registrationOriginalText
+        ↓ parser POMI
+registrationStart / registrationEnd
+```
+
+Use as datas estruturadas para filtrar. Para exibição, auditoria ou tratamento
+de inconsistências, preserve também `registrationOriginalText`. O POMI não deve
+corrigir silenciosamente uma ordem de datas aparentemente invertida na fonte.
+
+## Limites de interpretação
+
+- Campos podem ser `null` quando a publicação não possui estrutura reconhecível.
+- Estar na coleção de editais abertos não garante que a inscrição continue aberta no momento da consulta.
+- Arquivos externos podem ser substituídos ou removidos pelo emissor.
+- A deduplicação do POMI não transforma número, emissor ou título isoladamente em chave institucional universal.
+
+<span id="exchange-reference" class="section-anchor" aria-hidden="true"></span>
+
+## Referência técnica
+
+<ConceptSchema names={["ExchangeNotice", "ExchangePlace", "ExchangeNoticeFile"]} />
+
+<span id="exchange-sources" class="section-anchor" aria-hidden="true"></span>
+
+## Fontes e proveniência
+
+O coletor reúne as coleções aberta e encerrada, preserva o texto das inscrições
+e interpreta datas, destinos e documentos. As duas coleções institucionais são
+listadas abaixo como bibliografia.
+
+## Continue lendo
+
+- [Fontes, autoridade e proveniência](/domain/provenance/)
+- [Filtros e ordenação](/data-api/filtering/)

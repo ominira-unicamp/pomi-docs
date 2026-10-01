@@ -1,22 +1,308 @@
 ---
-title: Currículos e sugestões de cumprimento
-description: Requisitos de integralização e distribuição sugerida por semestre.
+title: Currículos e propostas de cumprimento
+description: O que compõe um currículo, quais percursos ele admite e como a proposta distribui seus componentes.
+tableOfContents: false
 concepts:
   - Program
   - CatalogProgram
   - Specialization
   - CurriculumSuggestion
+operations:
+  - listPrograms
+  - getPrograms
+  - listCatalogPrograms
+  - getCatalogPrograms
+  - listSpecializations
+  - getSpecializations
+  - listCurriculumSuggestions
+  - getCurriculumSuggestions
 officialSources:
-  - UNICAMP_CONSU_A_012_2025
-  - UNICAMP_DAC_CURRICULUM_42_2026
-  - UNICAMP_DAC_CURRICULUM_SUGGESTION_42_2026
+  - UNICAMP_DAC_RGCG
+  - UNICAMP_CCG_18_2026
+  - UNICAMP_DAC_ACADEMIC_STRUCTURE
+  - UNICAMP_DAC_PROGRAMS
   - UNICAMP_DAC_SPECIALIZATIONS
+  - UNICAMP_DAC_FOREIGN_LANGUAGE
+  - UNICAMP_DAC_PROGRAM_19_2026
+  - UNICAMP_DAC_CURRICULUM_19_2026
+  - UNICAMP_DAC_CURRICULUM_SUGGESTION_19_2026
 ---
 
+import CurriculumModel from "../../../components/CurriculumModel.astro";
+import CurriculumPayloads from "../../../components/CurriculumPayloads.astro";
+import CurriculumSuggestionExample from "../../../components/CurriculumSuggestionExample.astro";
+import InstitutionalDefinition from "../../../components/InstitutionalDefinition.astro";
+import ConceptSchema from "../../../components/ConceptSchema.astro";
+import ConceptTechnicalSurface from "../../../components/ConceptTechnicalSurface.astro";
+import ConceptTechnicalReference from "../../../components/ConceptTechnicalReference.astro";
+import ConceptProvenance from "../../../components/ConceptProvenance.astro";
+import FieldEnumSemantics from "../../../components/FieldEnumSemantics.astro";
+import UnionSemantics from "../../../components/UnionSemantics.astro";
+import SourceRef from "../../../components/SourceRef.astro";
 
-`CatalogProgram` descreve requisitos institucionais de integralização para uma
-versão de catálogo. Esses requisitos podem conter blocos, quantidades de créditos,
-disciplinas específicas, prefixos e escolhas abertas.
+O Currículo Pleno responde **o que precisa ser cumprido** para concluir uma
+formação. A proposta para cumprimento responde **quando a Unicamp recomenda
+distribuir** esses componentes ao longo dos períodos letivos.
 
-`CurriculumSuggestion` representa a proposta de distribuição desses requisitos
-por semestre. Ela não cria exigências adicionais nem substitui o currículo pleno.
+<div class="takeaway">
+  <strong>A distinção central:</strong> a proposta organiza o percurso no tempo,
+  mas não cria exigências nem substitui o Currículo Pleno.
+</div>
+
+**Contexto do exemplo:** curso 19 — História, no Catálogo dos Cursos de
+Graduação de 2026. Salvo indicação contrária, os valores desta página pertencem
+a essa edição.
+
+<nav class="contextual-nav" aria-label="Seções desta página">
+  <a href="#curriculum-model">Modelo</a>
+  <a href="#curriculum-usage">Consultar</a>
+  <a href="#curriculum-requirements">Requisitos</a>
+  <a href="#curriculum-paths">Percursos</a>
+  <a href="#curriculum-suggestion">Proposta</a>
+  <a href="#curriculum-technical-reference">Referência</a>
+  <a href="#curriculum-sources">Fontes</a>
+</nav>
+
+<span id="curriculum-model" class="section-anchor" aria-hidden="true"></span>
+
+## O modelo curricular
+
+<div class="table-wrap" tabindex="0">
+
+| Pergunta | Currículo Pleno | Proposta para cumprimento |
+|---|---|---|
+| O que responde? | O que deve ser cumprido? | Quando se recomenda cumprir? |
+| Contexto | curso, catálogo e percurso | percurso curricular |
+| Representação POMI | `CatalogProgram` | `CurriculumSuggestion` |
+| Conteúdo | requisitos, blocos e integralização | semestres, disciplinas e créditos eletivos sugeridos |
+| Cria exigências? | representa as exigências publicadas | não |
+
+</div>
+
+<CurriculumModel />
+
+### Da linguagem institucional ao POMI
+
+<div class="table-wrap" tabindex="0">
+
+| Conceito institucional | Representação POMI |
+|---|---|
+| curso de graduação | `Program` |
+| Currículo Pleno em uma edição | `CatalogProgram` |
+| edição anual do catálogo | `Catalog` / `catalogYear` |
+| habilitação ou ênfase | `Specialization` + `CatalogProgramVariant` |
+| requisitos comuns e específicos | `CourseBlockSet` |
+| forma de selecionar disciplinas | `CourseRequirement` |
+| opção por língua estrangeira | `CatalogProgramLanguage` |
+| proposta por período letivo | `CurriculumSuggestion` |
+
+</div>
+
+<div class="definition-stack">
+  <InstitutionalDefinition concept="Program" />
+  <InstitutionalDefinition concept="CatalogProgram" />
+  <InstitutionalDefinition concept="CurriculumSuggestion" />
+</div>
+
+<span id="curriculum-usage" class="section-anchor" aria-hidden="true"></span>
+
+## Como consultar esses dados
+
+Use `Program` para localizar a identidade do curso, `CatalogProgram` para obter
+seu currículo em determinada edição e `CurriculumSuggestion` para recuperar a
+distribuição recomendada por semestre.
+
+<ConceptTechnicalSurface concept="Program" title="Identificar um curso" description="Localize a identidade do curso independentemente do ano de catálogo." filterExample={{ label: "Cursos vinculados a uma unidade", expressions: [{ field: "unitId", operator: "eq", value: 1 }] }} />
+
+<ConceptTechnicalSurface concept="CatalogProgram" title="Obter o currículo publicado" description="Consulte requisitos, limites e percursos de um curso em uma edição do catálogo." filterExample={{ label: "Curso em uma edição do catálogo", expressions: [{ field: "catalogYear", operator: "eq", value: 2026 }, { field: "programCode", operator: "eq", value: 19 }] }} />
+
+<ConceptTechnicalSurface concept="CurriculumSuggestion" title="Obter a proposta por semestre" description="Recupere a sequência sugerida para um percurso curricular." filterExample={{ label: "Propostas de um curso em uma edição", expressions: [{ field: "catalogYear", operator: "eq", value: 2026 }, { field: "programCode", operator: "eq", value: 19 }] }} />
+
+<CurriculumPayloads />
+
+<span id="curriculum-requirements" class="section-anchor" aria-hidden="true"></span>
+
+## O que compõe o currículo
+
+O Currículo Pleno reúne os componentes e os prazos necessários para concluir
+uma formação. No POMI, `CourseBlockSet` separa dois grupos:
+
+- **obrigatórios:** componentes que precisam ser cumpridos;
+- **eletivos:** blocos nos quais se cumpre uma quantidade de créditos escolhendo entre as opções permitidas.
+
+```text
+CourseBlockSet
+├── mandatory[]   requisitos obrigatórios
+└── electives[]   blocos com créditos e opções de escolha
+```
+
+História possui uma base comum e blocos específicos. Bacharelado e Licenciatura
+compartilham disciplinas como `HH183`, enquanto cada percurso acrescenta seus
+próprios componentes e grupos eletivos.
+
+### Como um requisito identifica disciplinas
+
+O requisito responde quais disciplinas podem ocupar uma posição do currículo.
+Os nomes a seguir são discriminators do contrato POMI, não categorias do
+Regimento:
+
+<UnionSemantics name="CourseRequirement" showHeading={false} stacked={true} />
+
+No exemplo, `HH183` é `specific`, o prefixo `EX` é `prefix` e um bloco sem
+disciplina ou prefixo determinado usa `any`. A abertura de `any` vale somente
+dentro do bloco e da quantidade de créditos publicados.
+
+<span id="curriculum-paths" class="section-anchor" aria-hidden="true"></span>
+
+## Percursos curriculares
+
+O Currículo Pleno pode possuir um núcleo comum e diferentes núcleos específicos.
+A Unicamp distingue habilitação de ênfase pela diferenciação do núcleo. O POMI
+usa `Specialization` para representar essas opções, mas o contrato público não
+diferencia explicitamente habilitação de ênfase.
+
+<InstitutionalDefinition concept="Specialization" />
+
+Em História, `AA` — Bacharelado e `AB` — Licenciatura são variantes associadas
+a `Specialization`:
+
+- `AA`: 186 créditos, 2.790 horas supervisionadas e 300 horas de extensão;
+- `AB`: 240 créditos, 3.600 horas supervisionadas e 360 horas de extensão.
+
+Ambas possuem prazo regular de oito semestres e prazo máximo de doze. Esses
+valores pertencem à edição usada no exemplo.
+
+<UnionSemantics name="CatalogProgramVariant" showHeading={false} stacked={true} />
+
+<span id="curriculum-languages" class="section-anchor" aria-hidden="true"></span>
+
+### Opção por língua estrangeira
+
+Quando o Currículo Pleno exige uma opção de língua, o estudante escolhe uma das
+línguas previstas e deve cumprir integralmente as disciplinas daquela opção,
+conforme a <SourceRef id="UNICAMP_DAC_FOREIGN_LANGUAGE" />. O POMI representa
+cada opção por `CatalogProgramLanguage`, com seu próprio conjunto de blocos.
+
+Ausência de itens em `CatalogProgram.languages` não significa que a instituição
+possua uma opção desconhecida; significa apenas que o contrato não apresenta
+uma opção estruturada para aquele registro.
+
+## Características da edição
+
+As informações desta seção pertencem a `CatalogProgram`, não à identidade
+historicamente invariável de `Program`. O exemplo vem da página institucional do
+<SourceRef id="UNICAMP_DAC_PROGRAM_19_2026" label="curso 19 — História" />.
+
+### Turno
+
+`CatalogProgram.shift` registra um valor normalizado. A fonte publica História
+como “Integral”; o POMI representa esse valor como `DAYTIME`.
+
+<FieldEnumSemantics name="CatalogProgram.shift" />
+
+### Limite de créditos por período
+
+`CatalogProgram.creditLimitType` descreve a forma da regra. No exemplo, `FIXED`
+seleciona a modalidade e `creditLimitFixedCredits: 36` guarda o valor.
+
+O limite publicado para História é de **36 créditos por período letivo**.
+
+<FieldEnumSemantics name="CatalogProgram.creditLimitType" />
+
+#### Como funciona `CR_FORMULA`
+
+Alguns cursos usam um limite fixo até o estudante totalizar uma quantidade
+definida de créditos matriculados. A partir do período seguinte, aplica-se:
+
+```text
+limite de créditos = base + multiplicador × CR
+```
+
+O `CR` da graduação varia de `0` a `1`. Os campos correspondentes são:
+
+<div class="table-wrap" tabindex="0">
+
+| Campo | Papel na regra |
+|---|---|
+| `creditLimitBeforeThresholdCredits` | limite antes da fórmula |
+| `creditLimitThresholdCredits` | total de créditos que ativa a mudança |
+| `creditLimitCrBase` | parcela fixa |
+| `creditLimitCrMultiplier` | valor multiplicado pelo `CR` |
+
+</div>
+
+Com limite inicial e limiar `30`, base `20`, multiplicador `16` e `CR = 0,75`:
+
+```text
+20 + 16 × 0,75 = 32 créditos
+```
+
+O POMI preserva os parâmetros publicados, mas não calcula nem arredonda o
+resultado. História utiliza o limite fixo apresentado acima.
+
+<span id="curriculum-suggestion" class="section-anchor" aria-hidden="true"></span>
+
+## Proposta para cumprimento
+
+`CurriculumSuggestion` distribui componentes por semestre para um percurso. Ela
+não transforma uma disciplina em obrigatória, não substitui os blocos do
+currículo e não comprova que uma turma será oferecida no futuro.
+
+<CurriculumSuggestionExample />
+
+`SemesterSuggestion.electiveCredits` indica quantos créditos eletivos a proposta
+reserva para aquele semestre. O campo não escolhe disciplinas: as opções válidas
+continuam definidas pelos blocos de `CatalogProgram`.
+
+Cada item sugerido referencia uma disciplina já conhecida pelo POMI. Para a
+semântica de `Course` e `CatalogCourse`, consulte
+[Disciplinas e catálogos](/domain/courses-and-catalogs/).
+
+## Limites de interpretação
+
+- O ano do catálogo faz parte do significado de limites, blocos e integralização.
+- `Specialization` não preserva explicitamente a distinção entre habilitação e ênfase.
+- `DAYTIME` e outros enums normalizados não devem ser interpretados além da semântica documentada.
+- Um requisito `any` não autoriza escolhas fora do bloco publicado.
+- A proposta não cria requisitos nem garante oferecimento futuro.
+- Ausência e `null` não devem ser interpretados automaticamente como zero ou inexistência institucional.
+- Códigos sugeridos sem correspondência não autorizam criar uma disciplina.
+
+<span id="curriculum-technical-reference" class="section-anchor" aria-hidden="true"></span>
+
+## Referência técnica
+
+Os blocos seguintes vêm do contrato público e permanecem recolhidos até serem
+necessários.
+
+<ConceptTechnicalReference concept="Program" />
+
+<ConceptTechnicalReference concept="CatalogProgram" semanticLinks={{ shift: { label: "Explicação do turno", href: "#field-enum-CatalogProgram-shift" }, creditLimitType: { label: "Explicação do limite de créditos", href: "#field-enum-CatalogProgram-creditLimitType" }, base: { label: "Explicação dos requisitos", href: "#curriculum-requirements" }, variants: { label: "Explicação dos percursos", href: "#curriculum-paths" }, languages: { label: "Explicação das opções de língua", href: "#curriculum-languages" } }} fieldGroups={[{ title: "Identidade e contexto", fields: ["id", "catalogId", "catalogYear", "programId", "programCode", "programName", "title"] }, { title: "Características da edição", fields: ["shift", "creditLimitType", "creditLimitFixedCredits", "creditLimitBeforeThresholdCredits", "creditLimitThresholdCredits", "creditLimitCrBase", "creditLimitCrMultiplier", "professionalPracticeDescription"] }, { title: "Estrutura curricular", fields: ["base", "variants", "languages"] }]} />
+
+<ConceptTechnicalReference concept="Specialization" />
+
+<ConceptTechnicalReference concept="CurriculumSuggestion" semanticLinks={{ semesters: { label: "Explicação da proposta de cumprimento", href: "#curriculum-suggestion" } }} fieldGroups={[{ title: "Identidade e contexto", fields: ["id", "catalogProgramVariantId", "catalogProgramId", "catalogYear", "programId", "programCode", "programName", "specialization"] }, { title: "Distribuição recomendada", fields: ["semesters"] }]} />
+
+### Estruturas auxiliares
+
+<ConceptSchema names={["CourseBlockSet", "ElectiveBlock", "CourseRequirement", "CatalogProgramVariant", "CatalogProgramLanguage", "SemesterSuggestion", "CurriculumSuggestionCourse"]} />
+
+<span id="curriculum-sources" class="section-anchor" aria-hidden="true"></span>
+
+## Fontes e proveniência
+
+O Regimento fundamenta o significado; o Catálogo publica os valores da edição;
+o POMI estrutura e relaciona esses dados. Os detalhes abaixo registram a linhagem
+campo a campo sem expor nomes internos de coleta e injeção.
+
+<ConceptProvenance concept="Program" />
+<ConceptProvenance concept="CatalogProgram" />
+<ConceptProvenance concept="Specialization" />
+<ConceptProvenance concept="CurriculumSuggestion" />
+
+## Continue lendo
+
+- **Entender os componentes:** [Disciplinas e catálogos](/domain/courses-and-catalogs/).
+- **Interpretar dependências:** [Pré-requisitos](/domain/prerequisites/).
+- **Usar os recursos:** [Filtros e ordenação](/data-api/filtering/).
+- **Consultar o contrato completo:** [Data API](https://data.pomi.ominira.dev/docs).

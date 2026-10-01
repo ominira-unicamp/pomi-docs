@@ -51,6 +51,26 @@
           "label": "Vetor de carga horária",
           "section": "Capítulo II",
           "articles": ["27"]
+        },
+        {
+          "label": "Currículo Pleno e proposta de cumprimento",
+          "section": "Capítulo II — Seção I",
+          "articles": ["14", "15", "16"]
+        },
+        {
+          "label": "Vínculo entre estudante e currículo",
+          "section": "Capítulo II — Seção II",
+          "articles": ["17", "18", "19", "20"]
+        },
+        {
+          "label": "Habilitações, ênfases e certificados",
+          "section": "Capítulo II — Seção III",
+          "articles": ["21", "22", "23"]
+        },
+        {
+          "label": "Opção por língua estrangeira",
+          "section": "Capítulo II — Seção IV",
+          "articles": ["24"]
         }
       ],
       "temporalScope": {
@@ -90,12 +110,19 @@
       "concepts": [
         "Course",
         "CatalogCourse",
+        "CatalogProgram",
         "CourseRequirement"
       ],
       "cadence": "irregular",
       "access": "public",
       "licenseNote": "não identificada",
-      "provenanceNote": "Obrigatoriedade e eletividade são relações curriculares, não propriedades intrínsecas de Course."
+      "provenanceNote": "Obrigatoriedade e eletividade são relações curriculares, não propriedades intrínsecas de Course.",
+      "references": [
+        {
+          "label": "Caráter curricular",
+          "articles": ["3"]
+        }
+      ]
     },
     {
       "id": "UNICAMP_CCG_28_2025",
@@ -243,6 +270,57 @@
       "provenanceNote": "A proposta de cumprimento é uma sequência sugerida, não uma exigência adicional."
     },
     {
+      "id": "UNICAMP_DAC_PROGRAM_19_2026",
+      "familyId": "UNICAMP_DAC_CATALOG",
+      "context": { "catalogYear": 2026, "programCode": "19" },
+      "priority": "P0",
+      "authority": "registry",
+      "title": "Curso 19 — História — 2026",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/sistemas/catalogos/grad/catalogo2026/cursos/19g/index.html",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "catalog-program",
+      "concepts": ["Program", "CatalogProgram", "Specialization"],
+      "cadence": "per-catalog",
+      "access": "public",
+      "licenseNote": "Todos os direitos reservados",
+      "provenanceNote": "Turno, variantes, integralização e limite de créditos pertencem ao programa no catálogo."
+    },
+    {
+      "id": "UNICAMP_DAC_CURRICULUM_19_2026",
+      "familyId": "UNICAMP_DAC_CATALOG",
+      "context": { "catalogYear": 2026, "programCode": "19" },
+      "priority": "P0",
+      "authority": "registry",
+      "title": "História — Currículo Pleno 2026",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/sistemas/catalogos/grad/catalogo2026/cursos/19g/curriculo.html",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "full-curriculum",
+      "concepts": ["CatalogProgram", "CourseBlock", "CourseRequirement"],
+      "cadence": "per-catalog",
+      "access": "public",
+      "licenseNote": "Todos os direitos reservados",
+      "provenanceNote": "O Currículo Pleno define a base comum e os blocos específicos de Bacharelado e Licenciatura."
+    },
+    {
+      "id": "UNICAMP_DAC_CURRICULUM_SUGGESTION_19_2026",
+      "familyId": "UNICAMP_DAC_CATALOG",
+      "context": { "catalogYear": 2026, "programCode": "19" },
+      "priority": "P0",
+      "authority": "registry",
+      "title": "História — Proposta para Cumprimento de Currículo 2026",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/sistemas/catalogos/grad/catalogo2026/cursos/19g/sugestao.html",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "curriculum-suggestion",
+      "concepts": ["CurriculumSuggestion", "SemesterSuggestion"],
+      "cadence": "per-catalog",
+      "access": "public",
+      "licenseNote": "Todos os direitos reservados",
+      "provenanceNote": "A proposta organiza os componentes de cada variante ao longo de oito semestres."
+    },
+    {
       "id": "UNICAMP_DAC_DISCIPLINES_MC_2026",
       "familyId": "UNICAMP_DAC_CATALOG",
       "context": { "catalogYear": 2026, "coursePrefix": "MC" },
@@ -348,6 +426,21 @@
       "access": "public",
       "licenseNote": "não identificada",
       "provenanceNote": "Habilitação, ênfase e certificado possuem significados institucionais distintos."
+    },
+    {
+      "id": "UNICAMP_DAC_FOREIGN_LANGUAGE",
+      "priority": "P1",
+      "authority": "complementary",
+      "title": "Opção por Língua Estrangeira",
+      "issuer": "Diretoria Acadêmica",
+      "url": "https://www.dac.unicamp.br/portal/vida-academica/graduacao/estruturacurricular/opcao-por-lingua-estrangeira",
+      "lastVerifiedAt": "2026-09-27",
+      "type": "official-domain-explanation",
+      "concepts": ["CatalogProgram", "CatalogProgramLanguage"],
+      "cadence": "slow",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Uma opção obrigatória de língua exige o cumprimento integral das disciplinas que a compõem."
     },
     {
       "id": "UNICAMP_DAC_PROGRAMS",
@@ -513,6 +606,97 @@
       "access": "public",
       "licenseNote": "não identificada",
       "provenanceNote": "Modo de avaliação do catálogo deve ser separado dos critérios definidos por turma."
+    },
+    {
+      "id": "UNICAMP_UNITS",
+      "priority": "P0",
+      "authority": "registry",
+      "title": "Faculdades e Institutos",
+      "issuer": "Universidade Estadual de Campinas",
+      "url": "https://www.unicamp.br/faculdades-e-institutos/",
+      "lastVerifiedAt": "2026-09-28",
+      "type": "institutional-structure",
+      "concepts": ["Unit"],
+      "cadence": "irregular",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Apresenta as unidades de ensino e pesquisa; os códigos usados pelo POMI dependem das fontes operacionais."
+    },
+    {
+      "id": "UNICAMP_DATA_PORTAL_PROFESSORS",
+      "priority": "P0",
+      "authority": "operational",
+      "title": "Portal Docentes e Pesquisadores",
+      "issuer": "Universidade Estadual de Campinas",
+      "url": "https://portal.dados.unicamp.br/",
+      "lastVerifiedAt": "2026-09-28",
+      "type": "institutional-profile-portal",
+      "concepts": ["Professor", "ProfessorDataPortalProfile", "Department", "ProfessorPosition", "CareerReference", "Keyword", "Coauthor"],
+      "cadence": "unspecified",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Publica perfis, afiliações, identificadores, formação, palavras-chave e relações acadêmicas."
+    },
+    {
+      "id": "UNICAMP_PREFEITURA_MENU",
+      "priority": "P0",
+      "authority": "operational",
+      "title": "Cardápio dos Restaurantes Universitários",
+      "issuer": "Prefeitura Universitária",
+      "url": "https://www.prefeitura.unicamp.br/cardapio/",
+      "lastVerifiedAt": "2026-09-28",
+      "type": "official-menu-portal",
+      "concepts": ["DailyMenu", "Meal"],
+      "cadence": "operational",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Página oficial de entrada para os cardápios dos restaurantes universitários."
+    },
+    {
+      "id": "UNICAMP_PREFEITURA_MENU_APP",
+      "priority": "P0",
+      "authority": "operational",
+      "title": "Aplicação oficial de cardápio",
+      "issuer": "Prefeitura Universitária",
+      "url": "https://sistemas.prefeitura.unicamp.br/apps/cardapio/index.php",
+      "landingUrl": "https://www.prefeitura.unicamp.br/cardapio/",
+      "lastVerifiedAt": "2026-09-28",
+      "type": "official-menu-application",
+      "concepts": ["DailyMenu", "Meal"],
+      "cadence": "operational",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Fonte consultada por data para refeições, itens, observações e avisos de serviço."
+    },
+    {
+      "id": "UNICAMP_DERI_EXCHANGE_OPEN",
+      "priority": "P0",
+      "authority": "operational",
+      "title": "Editais de intercâmbio",
+      "issuer": "Diretoria Executiva de Relações Internacionais",
+      "url": "https://www.internationaloffice.unicamp.br/intercambio/editais/",
+      "lastVerifiedAt": "2026-09-28",
+      "type": "exchange-notice-registry",
+      "concepts": ["ExchangeNotice", "ExchangePlace", "ExchangeNoticeFile"],
+      "cadence": "operational",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Publica oportunidades abertas, seus períodos de inscrição e documentos associados."
+    },
+    {
+      "id": "UNICAMP_DERI_EXCHANGE_CLOSED",
+      "priority": "P0",
+      "authority": "operational",
+      "title": "Editais de intercâmbio encerrados",
+      "issuer": "Diretoria Executiva de Relações Internacionais",
+      "url": "https://www.internationaloffice.unicamp.br/intercambio/editais/editais-fechados/",
+      "lastVerifiedAt": "2026-09-28",
+      "type": "exchange-notice-archive",
+      "concepts": ["ExchangeNotice", "ExchangePlace", "ExchangeNoticeFile"],
+      "cadence": "operational",
+      "access": "public",
+      "licenseNote": "não identificada",
+      "provenanceNote": "Preserva oportunidades encerradas e seus documentos para consulta histórica."
     }
   ]
 }

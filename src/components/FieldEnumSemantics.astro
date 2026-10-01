@@ -1,0 +1,57 @@
+---
+import manifest from "../../.cache/generated/data-domain-manifest.json";
+import semantics from "../../semantics/data-api.json";
+import registry from "../../sources/unicamp.json";
+import {
+  commonSemanticSources,
+  specificSemanticSources,
+  type DomainSemantics,
+  type SemanticSource
+} from "../../scripts/semantics.ts";
+import { resolveSource, type OfficialSourceRegistry } from "../../scripts/source-registry.ts";
+
+interface Props { name: string; showHeading?: boolean; title?: string }
+const { name, showHeading = false, title } = Astro.props;
+const documented = (semantics as DomainSemantics).fieldEnums[name];
+if (!documented) throw new Error(`Missing documented field enum: ${name}`);
+const concept = manifest.concepts[documented.concept as keyof typeof manifest.concepts];
+const field = concept?.fields.find(({ name: fieldName }) => fieldName === documented.field);
+if (!field?.enumValues) throw new Error(`Unknown field enum: ${name}`);
+const sourceRegistry = registry as OfficialSourceRegistry;
+const values = field.enumValues.map((value) => documented.values[value]);
+const commonSources = commonSemanticSources(values);
+const sourceReference = (reference: SemanticSource) => {
+  const source = resolveSource(sourceRegistry, reference.sourceId);
+  return source ? { source, suffix: reference.referenceLabel ? ` — ${reference.referenceLabel}` : "" } : null;
+};
+---
+
+<section class="knowledge-section" aria-labelledby={`field-enum-${name.replace(".", "-")}`}>
+  {showHeading && <h3 id={`field-enum-${name.replace(".", "-")}`}>{title ?? name}</h3>}
+  {commonSources.length > 0 && (
+    <p class="semantic-sources"><small>
+      Fonte{commonSources.length > 1 ? "s" : ""}: {commonSources.map((reference, index) => {
+        const resolved = sourceReference(reference);
+        return resolved && <>{index > 0 && "; "}<a href={resolved.source.url}>{resolved.source.title}</a>{resolved.suffix}</>;
+      })}
+    </small></p>
+  )}
+  <div id={!showHeading ? `field-enum-${name.replace(".", "-")}` : undefined} class="semantic-list enum-value-list">
+    {field.enumValues.map((value) => {
+      const semantic = documented.values[value];
+      const specificSources = specificSemanticSources(semantic, commonSources);
+      return (
+        <article class="semantic-value">
+          <h4><code>{value}</code></h4>
+          <p><strong>{semantic.label}</strong></p>
+          <p>{semantic.description}</p>
+          {specificSources.map((reference) => {
+            const resolved = sourceReference(reference);
+            return resolved && <p><small>Fonte: <a href={resolved.source.url}>{resolved.source.title}</a>{resolved.suffix}</small></p>;
+          })}
+        </article>
+      );
+    })}
+  </div>
+  {field.nullable && <p><strong>Quando o valor é <code>null</code>:</strong> {documented.nullMeaning}</p>}
+</section>
